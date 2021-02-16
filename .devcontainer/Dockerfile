@@ -15,3 +15,10 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 
 # [Optional] Uncomment if you want to install more global node modules
 # RUN su node -c "npm install -g <your-package-list-here>"
+
+# Prepare Android directories
+USER node
+WORKDIR /home/node
+ENV ANDROID_SDK_ROOT /home/node/Android/sdk
+ENV ANDROID_HOME /home/node/Android/sdk
+RUN mkdir -p Android/sdk .android && touch .android/repositories.cfg
