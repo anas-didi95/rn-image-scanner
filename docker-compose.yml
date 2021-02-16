@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 services:
   app:
@@ -14,3 +14,4 @@ services:
     volumes:
       - ./:/workspace
       - ./npm-docker:/home/node/.npm
+      - ./gradle-docker:/home/node/.gradle
