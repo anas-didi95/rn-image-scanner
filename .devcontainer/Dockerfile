@@ -38,3 +38,9 @@ RUN wget -O sdk-tools.zip https://dl.google.com/android/repository/sdk-tools-lin
   && sed -ie 's%^CLASSPATH=.*%\0:$APP_HOME/jaxb_lib/*%' bin/sdkmanager bin/avdmanager \
   && yes | ./bin/sdkmanager --licenses \
   && ./bin/sdkmanager "build-tools;29.0.2" "patcher;v4" "platform-tools" "platforms;android-29" "sources;android-29"
+
+# Prepare system variables
+ENV PATH "$PATH:/home/node/Android/sdk/platform-tools"
+ENV PATH "$PATH:/home/node/Android/sdk/emulator"
+ENV PATH "$PATH:/home/node/Android/sdk/tools"
+ENV PATH "$PATH:/home/node/Android/sdk/tools/bin"
