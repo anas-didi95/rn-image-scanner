@@ -19,6 +19,8 @@ An app to find phone numbers, email and website links available in a photo and t
 
 ## Technologies
 * React Native - Version 0.63.4
+* Native Base - Version 2.15.2
+* React Navigation - Version 5.9.2
 
 ---
 

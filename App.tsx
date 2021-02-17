@@ -1,43 +1,18 @@
-import {
-  Body,
-  Button,
-  Container,
-  Content,
-  Footer,
-  FooterTab,
-  Header,
-  Icon,
-  Left,
-  Right,
-  Text,
-  Title,
-} from 'native-base';
 import React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import HomeScreen from './src/screens/HomeScreen';
+import AboutScreen from './src/screens/AboutScreen';
+
+const StackNavigator = createStackNavigator();
 
 const App = () => (
-  <Container>
-    <Header>
-      <Left>
-        <Button transparent>
-          <Icon name="menu" />
-        </Button>
-      </Left>
-      <Body>
-        <Title>Header</Title>
-      </Body>
-      <Right />
-    </Header>
-    <Content>
-      <Text>This is Content Section</Text>
-    </Content>
-    <Footer>
-      <FooterTab>
-        <Button full>
-          <Text>Footer</Text>
-        </Button>
-      </FooterTab>
-    </Footer>
-  </Container>
+  <NavigationContainer>
+    <StackNavigator.Navigator initialRouteName="Home">
+      <StackNavigator.Screen name="Home" component={HomeScreen} />
+      <StackNavigator.Screen name="About" component={AboutScreen} />
+    </StackNavigator.Navigator>
+  </NavigationContainer>
 );
 
 export default App;
