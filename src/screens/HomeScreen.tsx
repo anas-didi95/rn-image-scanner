@@ -1,6 +1,8 @@
 import {
   Body,
   Button,
+  Card,
+  CardItem,
   Container,
   Content,
   Fab,
@@ -12,7 +14,7 @@ import {
   Title,
 } from 'native-base';
 import React, {useState} from 'react';
-import {StyleSheet} from 'react-native';
+import {Image, StyleSheet} from 'react-native';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
@@ -32,8 +34,23 @@ const HomeScreen = () => {
         </Body>
         <Right />
       </Header>
-      <Content>
-        <Text>Hello world</Text>
+      <Content style={styles.content}>
+        <Card>
+          <CardItem>
+            <Body>
+              <Text>//Your text here</Text>
+            </Body>
+          </CardItem>
+          <CardItem>
+            <Image
+              source={{
+                uri:
+                  'https://www.notebookcheck.net/fileadmin/_processed_/9/1/csm_thinkpad25_f682fa1286.jpg',
+              }}
+              style={styles.image}
+            />
+          </CardItem>
+        </Card>
       </Content>
       <Fab
         direction="up"
@@ -50,6 +67,13 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  content: {
+    padding: 10,
+  },
+  image: {
+    height: 200,
+    flex: 1,
+  },
   cameraButton: {
     backgroundColor: 'green',
   },
