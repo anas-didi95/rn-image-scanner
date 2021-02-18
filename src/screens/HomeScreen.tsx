@@ -1,35 +1,57 @@
-import {useNavigation} from '@react-navigation/native';
-import {Button, Container, Content, Footer, FooterTab, Text} from 'native-base';
-import React from 'react';
+import {
+  Body,
+  Button,
+  Container,
+  Content,
+  Fab,
+  Header,
+  Icon,
+  Left,
+  Right,
+  Text,
+  Title,
+} from 'native-base';
+import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
 
 const HomeScreen = () => {
-  const {navigate} = useNavigation();
+  const [isFabActive, setFabActive] = useState<boolean>(false);
 
-  const onNavigateAbout = () => navigate('About');
+  const toggleFabActive = () => setFabActive((prev) => !prev);
 
   return (
     <Container>
-      <Content style={styles.body}>
-        <Text>This is Content Section</Text>
-        <Button onPress={onNavigateAbout}>
-          <Text>Navigate to About</Text>
-        </Button>
-      </Content>
-      <Footer>
-        <FooterTab>
-          <Button full>
-            <Text>Footer</Text>
+      <Header>
+        <Left>
+          <Button transparent>
+            <Icon name="menu" />
           </Button>
-        </FooterTab>
-      </Footer>
+        </Left>
+        <Body>
+          <Title>About</Title>
+        </Body>
+        <Right />
+      </Header>
+      <Content>
+        <Text>Hello world</Text>
+      </Content>
+      <Fab
+        direction="up"
+        position="bottomRight"
+        active={isFabActive}
+        onPress={toggleFabActive}>
+        <Icon name={`${!isFabActive ? 'menu-sharp' : 'close-sharp'}`} />
+        <Button style={styles.cameraButton}>
+          <Icon name="camera-outline" />
+        </Button>
+      </Fab>
     </Container>
   );
 };
 
 const styles = StyleSheet.create({
-  body: {
-    padding: 10,
+  cameraButton: {
+    backgroundColor: 'green',
   },
 });
 
