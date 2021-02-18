@@ -14,8 +14,8 @@ import {
   Text,
   Title,
 } from 'native-base';
-import React, {useState} from 'react';
-import {Image, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Alert, BackHandler, Image, StyleSheet} from 'react-native';
 import Camera from '../components/Camera';
 
 const HomeScreen = () => {
@@ -26,6 +26,32 @@ const HomeScreen = () => {
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
   const onOpenCamera = () => setOpenCamera(true);
+
+  useEffect(() => {
+    const backAction = () => {
+      if (isOpenCamera) {
+        setOpenCamera(false);
+        return true;
+      }
+
+      Alert.alert('Hold on!', 'Are you sure you want to go exit?', [
+        {
+          text: 'Cancel',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {text: 'YES', onPress: () => BackHandler.exitApp()},
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, [isOpenCamera]);
 
   return (
     <>
@@ -40,7 +66,7 @@ const HomeScreen = () => {
               </Button>
             </Left>
             <Body>
-              <Title>About</Title>
+              <Title>Home</Title>
             </Body>
             <Right />
           </Header>
