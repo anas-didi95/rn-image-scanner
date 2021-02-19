@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
@@ -6,13 +7,14 @@ import {useCameraContext} from '../utils/contexts/CameraContext';
 const Camera = () => {
   const [camera, setCamera] = useState<RNCamera | null>();
   const cameraContext = useCameraContext();
+  const navigation = useNavigation();
 
   const onSnap = async () => {
     if (camera) {
       const options = {quality: 0.5, base64: true};
       const data = await camera.takePictureAsync(options);
-      console.log('onSnap', data.uri);
       cameraContext.setUri(data.uri);
+      navigation.goBack();
     }
   };
 
