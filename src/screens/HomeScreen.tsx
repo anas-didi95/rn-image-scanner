@@ -17,15 +17,20 @@ import {
 import React, {useEffect, useState} from 'react';
 import {Alert, BackHandler, Image, StyleSheet} from 'react-native';
 import Camera from '../components/Camera';
+import {useCameraContext} from '../utils/contexts/CameraContext';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
   const isFocused = useIsFocused();
   const [isOpenCamera, setOpenCamera] = useState<boolean>(false);
+  const cameraContext = useCameraContext();
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
-  const onOpenCamera = () => setOpenCamera(true);
+  const onOpenCamera = () => {
+    cameraContext.setOpen();
+    //setOpenCamera(true);
+  };
 
   useEffect(() => {
     const backAction = () => {
@@ -66,7 +71,7 @@ const HomeScreen = () => {
               </Button>
             </Left>
             <Body>
-              <Title>Home</Title>
+              <Title>Home {cameraContext.isOpen() ? 'Open' : 'Close'}</Title>
             </Body>
             <Right />
           </Header>
@@ -96,6 +101,12 @@ const HomeScreen = () => {
             <Icon name={`${!isFabActive ? 'menu-sharp' : 'close-sharp'}`} />
             <Button style={styles.cameraButton}>
               <Icon name="camera-outline" onPress={onOpenCamera} />
+            </Button>
+            <Button style={styles.cameraButton}>
+              <Icon
+                name="trash-outline"
+                onPress={() => cameraContext.setClose()}
+              />
             </Button>
           </Fab>
         </Container>
