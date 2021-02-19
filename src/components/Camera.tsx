@@ -1,6 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
+import {Icon} from 'native-base';
 import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {useCameraContext} from '../utils/contexts/CameraContext';
 
@@ -45,7 +46,7 @@ const Camera = () => {
       />
       <View style={styles.camera}>
         <TouchableOpacity onPress={onSnap} style={styles.capture}>
-          <Text style={styles.cameraButton}> SNAP </Text>
+          <Icon name="camera" />
         </TouchableOpacity>
       </View>
     </View>
@@ -66,9 +67,8 @@ const styles = StyleSheet.create({
   capture: {
     flex: 0,
     backgroundColor: '#fff',
-    borderRadius: 5,
+    borderRadius: 100,
     padding: 15,
-    paddingHorizontal: 20,
     alignSelf: 'center',
     margin: 20,
   },
