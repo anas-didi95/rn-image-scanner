@@ -13,10 +13,10 @@ import {
   Title,
 } from 'native-base';
 import React from 'react';
-import {useCameraContext} from '../utils/contexts/CameraContext';
+import useConstants from '../utils/hooks/useConstants';
 
 const AboutScreen = () => {
-  const cameraContext = useCameraContext();
+  const constants = useConstants();
 
   return (
     <Container>
@@ -27,7 +27,7 @@ const AboutScreen = () => {
           </Button>
         </Left>
         <Body>
-          <Title>About {cameraContext.isOpen() ? 'Open' : 'false'}</Title>
+          <Title>{constants.header.about}</Title>
         </Body>
         <Right />
       </Header>

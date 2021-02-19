@@ -10,10 +10,12 @@ import CameraProvider, {
 import Camera from './src/components/Camera';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Alert, BackHandler} from 'react-native';
+import useConstants from './src/utils/hooks/useConstants';
 
 const HomeTabNavigator = createBottomTabNavigator();
 const HomeTab = () => {
   const cameraContext = useCameraContext();
+  const constants = useConstants();
 
   useFocusEffect(() => {
     cameraContext.setClose();
@@ -38,19 +40,21 @@ const HomeTab = () => {
   });
 
   return (
-    <HomeTabNavigator.Navigator initialRouteName="Home">
+    <HomeTabNavigator.Navigator initialRouteName={constants.route.homeTab.home}>
       <HomeTabNavigator.Screen
-        name="Home"
+        name={constants.route.homeTab.home}
         component={HomeScreen}
         options={{
+          title: constants.header.home,
           tabBarIcon: ({focused}) =>
             focused ? <Icon name="home" /> : <Icon name="home-outline" />,
         }}
       />
       <HomeTabNavigator.Screen
-        name="About"
+        name={constants.route.homeTab.about}
         component={AboutScreen}
         options={{
+          title: constants.header.about,
           tabBarIcon: ({focused}) =>
             focused ? <Icon name="person" /> : <Icon name="person-outline" />,
         }}
@@ -60,23 +64,28 @@ const HomeTab = () => {
 };
 
 const AppStackNavigator = createStackNavigator();
-const App = () => (
-  <NavigationContainer>
-    <CameraProvider>
-      <AppStackNavigator.Navigator initialRouteName="HomeTab">
-        <AppStackNavigator.Screen
-          name="HomeTab"
-          component={HomeTab}
-          options={{header: () => null}}
-        />
-        <AppStackNavigator.Screen
-          name="Camera"
-          component={Camera}
-          options={{header: () => null}}
-        />
-      </AppStackNavigator.Navigator>
-    </CameraProvider>
-  </NavigationContainer>
-);
+const App = () => {
+  const constants = useConstants();
+
+  return (
+    <NavigationContainer>
+      <CameraProvider>
+        <AppStackNavigator.Navigator
+          initialRouteName={constants.route.homeTab.index}>
+          <AppStackNavigator.Screen
+            name={constants.route.homeTab.index}
+            component={HomeTab}
+            options={{header: () => null}}
+          />
+          <AppStackNavigator.Screen
+            name={constants.route.camera}
+            component={Camera}
+            options={{header: () => null}}
+          />
+        </AppStackNavigator.Navigator>
+      </CameraProvider>
+    </NavigationContainer>
+  );
+};
 
 export default App;

@@ -17,18 +17,20 @@ import {
 import React, {useState} from 'react';
 import {Image, StyleSheet} from 'react-native';
 import {useCameraContext} from '../utils/contexts/CameraContext';
+import useConstants from '../utils/hooks/useConstants';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
   const cameraContext = useCameraContext();
   const navigation = useNavigation();
+  const constants = useConstants();
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
   const onOpenCamera = () => {
     cameraContext.setOpen();
     toggleFabActive();
-    navigation.navigate('Camera');
+    navigation.navigate(constants.route.camera);
   };
 
   return (
@@ -40,7 +42,7 @@ const HomeScreen = () => {
           </Button>
         </Left>
         <Body>
-          <Title>Home</Title>
+          <Title>{constants.header.home}</Title>
         </Body>
         <Right />
       </Header>
