@@ -1,54 +1,51 @@
-import React, {PureComponent} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 
-class Camera extends PureComponent {
-  camera: RNCamera | null | undefined;
-  render() {
-    return (
-      <View style={styles.container}>
-        <RNCamera
-          ref={(ref) => {
-            this.camera = ref;
-          }}
-          style={styles.preview}
-          type={RNCamera.Constants.Type.back}
-          flashMode={RNCamera.Constants.FlashMode.on}
-          androidCameraPermissionOptions={{
-            title: 'Permission to use camera',
-            message: 'We need your permission to use your camera',
-            buttonPositive: 'Ok',
-            buttonNegative: 'Cancel',
-          }}
-          androidRecordAudioPermissionOptions={{
-            title: 'Permission to use audio recording',
-            message: 'We need your permission to use your audio',
-            buttonPositive: 'Ok',
-            buttonNegative: 'Cancel',
-          }}
-          onGoogleVisionBarcodesDetected={({barcodes}) => {
-            console.log(barcodes);
-          }}
-        />
-        <View style={styles.camera}>
-          <TouchableOpacity
-            onPress={this.takePicture.bind(this)}
-            style={styles.capture}>
-            <Text style={styles.cameraButton}> SNAP </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
+const Camera = () => {
+  const [camera, setCamera] = useState<RNCamera | null>();
 
-  takePicture = async () => {
-    if (this.camera) {
+  const onSnap = async () => {
+    if (camera) {
       const options = {quality: 0.5, base64: true};
-      const data = await this.camera.takePictureAsync(options);
-      console.log(data.uri);
+      const data = await camera.takePictureAsync(options);
+      console.log('onSnap', data.uri);
     }
   };
-}
+
+  return (
+    <View style={styles.container}>
+      <RNCamera
+        ref={(ref) => {
+          setCamera(ref);
+        }}
+        style={styles.preview}
+        type={RNCamera.Constants.Type.back}
+        flashMode={RNCamera.Constants.FlashMode.on}
+        androidCameraPermissionOptions={{
+          title: 'Permission to use camera',
+          message: 'We need your permission to use your camera',
+          buttonPositive: 'Ok',
+          buttonNegative: 'Cancel',
+        }}
+        androidRecordAudioPermissionOptions={{
+          title: 'Permission to use audio recording',
+          message: 'We need your permission to use your audio',
+          buttonPositive: 'Ok',
+          buttonNegative: 'Cancel',
+        }}
+        onGoogleVisionBarcodesDetected={({barcodes}) => {
+          console.log(barcodes);
+        }}
+      />
+      <View style={styles.camera}>
+        <TouchableOpacity onPress={onSnap} style={styles.capture}>
+          <Text style={styles.cameraButton}> SNAP </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
