@@ -4,9 +4,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import AboutScreen from './src/screens/AboutScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from 'native-base';
-import CameraProvider, {
-  useCameraContext,
-} from './src/utils/contexts/CameraContext';
+import CameraProvider from './src/utils/contexts/CameraContext';
 import Camera from './src/components/Camera';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Alert, BackHandler} from 'react-native';
@@ -14,11 +12,9 @@ import useConstants from './src/utils/hooks/useConstants';
 
 const HomeTabNavigator = createBottomTabNavigator();
 const HomeTab = () => {
-  const cameraContext = useCameraContext();
   const constants = useConstants();
 
   useFocusEffect(() => {
-    cameraContext.setClose();
     const backAction = () => {
       Alert.alert('Hold on!', 'Are you sure you want to go exit?', [
         {
