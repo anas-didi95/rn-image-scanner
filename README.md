@@ -21,11 +21,13 @@ An app to find phone numbers, email and website links available in a photo and t
 * React Native - Version 0.63.4
 * Native Base - Version 2.15.2
 * React Navigation - Version 5.9.2
+* React Native Camera - Version 3.42.2
+* React Native Image Picker - Version 3.2.1
 
 ---
 
 ## Features
-- [ ] User can either click a photo or upload a photo from the gallery
+- [x] User can either click a photo or upload a photo from the gallery
 - [ ] Processing is done on the image.
 - [ ] If there are any phone numbers, email or web links present in the image then they are listed in the cards properly organized.
 - [ ] On tap on the details, an option is provided to save as contact.
