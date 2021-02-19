@@ -34,12 +34,9 @@ const HomeScreen = () => {
   const onClearPicture = () => cameraContext.clearUri();
 
   const onUpload = () => {
-    console.log('onUpload');
     launchImageLibrary(
       {mediaType: 'photo', quality: 0.5, includeBase64: false},
-      (response) => {
-        console.log('response', response);
-      },
+      (response) => cameraContext.setUri(response.uri ?? ''),
     );
   };
 
@@ -65,6 +62,7 @@ const HomeScreen = () => {
             <>
               <CardItem cardBody>
                 <Image
+                  resizeMode="stretch"
                   source={{
                     uri: cameraContext.getUri(),
                   }}
