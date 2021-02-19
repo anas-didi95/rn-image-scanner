@@ -32,6 +32,10 @@ const HomeScreen = () => {
 
   const onClearPicture = () => cameraContext.clearUri();
 
+  const onUpload = () => {
+    console.log('onUpload');
+  };
+
   return (
     <Container>
       <Header noLeft>
@@ -76,6 +80,9 @@ const HomeScreen = () => {
         <Button style={styles.cameraButton}>
           <Icon name="camera-outline" onPress={onOpenCamera} />
         </Button>
+        <Button style={styles.uploadButton}>
+          <Icon name="download-outline" onPress={onUpload} />
+        </Button>
       </Fab>
     </Container>
   );
@@ -97,6 +104,9 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     backgroundColor: 'gray',
+  },
+  uploadButton: {
+    backgroundColor: '#ff8c00',
   },
 });
 
