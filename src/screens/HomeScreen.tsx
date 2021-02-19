@@ -9,8 +9,6 @@ import {
   Fab,
   Header,
   Icon,
-  Left,
-  Right,
   Text,
   Title,
 } from 'native-base';
@@ -34,33 +32,36 @@ const HomeScreen = () => {
 
   return (
     <Container>
-      <Header>
-        <Left>
-          <Button transparent>
-            <Icon name="menu" />
-          </Button>
-        </Left>
+      <Header noLeft>
         <Body>
           <Title>{constants.header.home}</Title>
         </Body>
-        <Right />
       </Header>
       <Content style={styles.content}>
         <Card>
-          <CardItem>
-            <Body>
-              <Text>//Your text here</Text>
-            </Body>
+          <CardItem header>
+            <Text style={styles.cardHeader}>
+              {!cameraContext.getUri() ? 'Instruction' : 'Picture'}
+            </Text>
           </CardItem>
-          {!!cameraContext.getUri() && (
+          {!cameraContext.getUri() ? (
             <CardItem>
-              <Image
-                source={{
-                  uri: cameraContext.getUri(),
-                }}
-                style={styles.image}
-              />
+              <Text>Please snap a picture to start scanner.</Text>
             </CardItem>
+          ) : (
+            <>
+              <CardItem cardBody>
+                <Image
+                  source={{
+                    uri: cameraContext.getUri(),
+                  }}
+                  style={styles.image}
+                />
+              </CardItem>
+              <Button full style={styles.clearButton}>
+                <Text>Clear picture</Text>
+              </Button>
+            </>
           )}
         </Card>
       </Content>
@@ -88,6 +89,12 @@ const styles = StyleSheet.create({
   },
   cameraButton: {
     backgroundColor: 'green',
+  },
+  cardHeader: {
+    fontWeight: 'bold',
+  },
+  clearButton: {
+    backgroundColor: 'gray',
   },
 });
 
