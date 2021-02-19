@@ -3,10 +3,12 @@ import React, {createContext, ReactNode, useContext, useState} from 'react';
 interface ICameraContext {
   getUri: () => string;
   setUri: (uri: string) => void;
+  clearUri: () => void;
 }
 const CameraContext = createContext<ICameraContext>({
   getUri: () => '',
   setUri: () => {},
+  clearUri: () => {},
 });
 
 const CameraProvider: React.FC<{children: ReactNode}> = ({children}) => {
@@ -16,9 +18,10 @@ const CameraProvider: React.FC<{children: ReactNode}> = ({children}) => {
 
   const getUri = () => data.uri;
   const setUri = (uri: string) => setData((prev) => ({...prev, uri: uri}));
+  const clearUri = () => setData((prev) => ({...prev, uri: ''}));
 
   return (
-    <CameraContext.Provider value={{getUri, setUri}}>
+    <CameraContext.Provider value={{getUri, setUri, clearUri}}>
       {children}
     </CameraContext.Provider>
   );

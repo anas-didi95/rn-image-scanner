@@ -30,6 +30,8 @@ const HomeScreen = () => {
     navigation.navigate(constants.route.camera);
   };
 
+  const onClearPicture = () => cameraContext.clearUri();
+
   return (
     <Container>
       <Header noLeft>
@@ -58,7 +60,7 @@ const HomeScreen = () => {
                   style={styles.image}
                 />
               </CardItem>
-              <Button full style={styles.clearButton}>
+              <Button full style={styles.clearButton} onPress={onClearPicture}>
                 <Text>Clear picture</Text>
               </Button>
             </>
