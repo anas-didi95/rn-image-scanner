@@ -49,15 +49,17 @@ const HomeScreen = () => {
       </Header>
       <Content style={styles.content}>
         <Card>
-          <CardItem header>
-            <Text style={styles.cardHeader}>
-              {!cameraContext.getUri() ? 'Instruction' : 'Picture'}
-            </Text>
-          </CardItem>
           {!cameraContext.getUri() ? (
-            <CardItem>
-              <Text>Please snap a picture to start scanner.</Text>
-            </CardItem>
+            <>
+              <CardItem header>
+                <Text style={styles.cardHeader}>
+                  {!cameraContext.getUri() ? 'Instruction' : 'Picture'}
+                </Text>
+              </CardItem>
+              <CardItem>
+                <Text>Please snap a picture to start scanner.</Text>
+              </CardItem>
+            </>
           ) : (
             <>
               <CardItem cardBody>
@@ -98,7 +100,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   image: {
-    height: 200,
+    height: 350,
     flex: 1,
   },
   cameraButton: {
