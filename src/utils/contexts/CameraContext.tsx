@@ -11,8 +11,7 @@ const CameraContext = createContext<ICameraContext>({
 
 const CameraProvider: React.FC<{children: ReactNode}> = ({children}) => {
   const [data, setData] = useState<{uri: string}>({
-    uri:
-      'https://www.notebookcheck.net/fileadmin/_processed_/9/1/csm_thinkpad25_f682fa1286.jpg',
+    uri: '',
   });
 
   const getUri = () => data.uri;

@@ -52,14 +52,16 @@ const HomeScreen = () => {
               <Text>//Your text here</Text>
             </Body>
           </CardItem>
-          <CardItem>
-            <Image
-              source={{
-                uri: cameraContext.getUri(),
-              }}
-              style={styles.image}
-            />
-          </CardItem>
+          {!!cameraContext.getUri() && (
+            <CardItem>
+              <Image
+                source={{
+                  uri: cameraContext.getUri(),
+                }}
+                style={styles.image}
+              />
+            </CardItem>
+          )}
         </Card>
       </Content>
       <Fab
