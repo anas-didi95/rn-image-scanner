@@ -28,7 +28,6 @@ const HomeScreen = () => {
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
   const onOpenCamera = () => {
-    cameraContext.setOpen();
     toggleFabActive();
     navigation.navigate(constants.route.camera);
   };
@@ -56,8 +55,7 @@ const HomeScreen = () => {
           <CardItem>
             <Image
               source={{
-                uri:
-                  'https://www.notebookcheck.net/fileadmin/_processed_/9/1/csm_thinkpad25_f682fa1286.jpg',
+                uri: cameraContext.getUri(),
               }}
               style={styles.image}
             />

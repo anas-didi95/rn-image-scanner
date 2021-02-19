@@ -1,25 +1,25 @@
 import React, {createContext, ReactNode, useContext, useState} from 'react';
 
 interface ICameraContext {
-  isOpen: () => boolean;
-  setOpen: () => void;
-  setClose: () => void;
+  getUri: () => string;
+  setUri: (uri: string) => void;
 }
 const CameraContext = createContext<ICameraContext>({
-  isOpen: () => false,
-  setOpen: () => {},
-  setClose: () => {},
+  getUri: () => '',
+  setUri: () => {},
 });
 
 const CameraProvider: React.FC<{children: ReactNode}> = ({children}) => {
-  const [status, setStatus] = useState<boolean>(false);
+  const [data, setData] = useState<{uri: string}>({
+    uri:
+      'https://www.notebookcheck.net/fileadmin/_processed_/9/1/csm_thinkpad25_f682fa1286.jpg',
+  });
 
-  const isOpen = () => status;
-  const setOpen = () => setStatus(true);
-  const setClose = () => setStatus(false);
+  const getUri = () => data.uri;
+  const setUri = (uri: string) => setData((prev) => ({...prev, uri: uri}));
 
   return (
-    <CameraContext.Provider value={{isOpen, setOpen, setClose}}>
+    <CameraContext.Provider value={{getUri, setUri}}>
       {children}
     </CameraContext.Provider>
   );
