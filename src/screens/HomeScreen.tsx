@@ -16,6 +16,7 @@ import React, {useState} from 'react';
 import {Image, StyleSheet} from 'react-native';
 import {useCameraContext} from '../utils/contexts/CameraContext';
 import useConstants from '../utils/hooks/useConstants';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
@@ -32,6 +33,13 @@ const HomeScreen = () => {
 
   const onClearPicture = () => cameraContext.clearUri();
 
+  const onUpload = () => {
+    launchImageLibrary(
+      {mediaType: 'photo', quality: 0.5, includeBase64: false},
+      (response) => cameraContext.setUri(response.uri ?? ''),
+    );
+  };
+
   return (
     <Container>
       <Header noLeft>
@@ -41,19 +49,22 @@ const HomeScreen = () => {
       </Header>
       <Content style={styles.content}>
         <Card>
-          <CardItem header>
-            <Text style={styles.cardHeader}>
-              {!cameraContext.getUri() ? 'Instruction' : 'Picture'}
-            </Text>
-          </CardItem>
           {!cameraContext.getUri() ? (
-            <CardItem>
-              <Text>Please snap a picture to start scanner.</Text>
-            </CardItem>
+            <>
+              <CardItem header>
+                <Text style={styles.cardHeader}>
+                  {!cameraContext.getUri() ? 'Instruction' : 'Picture'}
+                </Text>
+              </CardItem>
+              <CardItem>
+                <Text>Please snap a picture to start scanner.</Text>
+              </CardItem>
+            </>
           ) : (
             <>
               <CardItem cardBody>
                 <Image
+                  resizeMode="stretch"
                   source={{
                     uri: cameraContext.getUri(),
                   }}
@@ -76,6 +87,9 @@ const HomeScreen = () => {
         <Button style={styles.cameraButton}>
           <Icon name="camera-outline" onPress={onOpenCamera} />
         </Button>
+        <Button style={styles.uploadButton}>
+          <Icon name="download-outline" onPress={onUpload} />
+        </Button>
       </Fab>
     </Container>
   );
@@ -86,7 +100,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   image: {
-    height: 200,
+    height: 350,
     flex: 1,
   },
   cameraButton: {
@@ -97,6 +111,9 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     backgroundColor: 'gray',
+  },
+  uploadButton: {
+    backgroundColor: '#ff8c00',
   },
 });
 
