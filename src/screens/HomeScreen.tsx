@@ -1,4 +1,4 @@
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {
   Body,
   Button,
@@ -24,11 +24,13 @@ const HomeScreen = () => {
   const isFocused = useIsFocused();
   const [isOpenCamera, setOpenCamera] = useState<boolean>(false);
   const cameraContext = useCameraContext();
+  const navigation = useNavigation();
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
   const onOpenCamera = () => {
-    cameraContext.setOpen();
+    navigation.navigate('Camera');
+    //cameraContext.setOpen();
     //setOpenCamera(true);
   };
 
