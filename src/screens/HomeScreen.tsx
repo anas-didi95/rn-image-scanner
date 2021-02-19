@@ -16,6 +16,7 @@ import React, {useState} from 'react';
 import {Image, StyleSheet} from 'react-native';
 import {useCameraContext} from '../utils/contexts/CameraContext';
 import useConstants from '../utils/hooks/useConstants';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
@@ -34,6 +35,12 @@ const HomeScreen = () => {
 
   const onUpload = () => {
     console.log('onUpload');
+    launchImageLibrary(
+      {mediaType: 'photo', quality: 0.5, includeBase64: false},
+      (response) => {
+        console.log('response', response);
+      },
+    );
   };
 
   return (
