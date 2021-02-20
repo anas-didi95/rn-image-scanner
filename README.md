@@ -58,6 +58,7 @@ To close the device connection, run script `adb-killserver.sh`.
 * [App ideas: Image Scanner](https://github.com/florinpop17/app-ideas/blob/master/Projects/2-Intermediate/Image-Scaner.md)
 * [How to dockerize Flutter apps](https://blog.codemagic.io/how-to-dockerize-flutter-apps/)
 * [Java: How to resolve java.lang.NoClassDefFoundError: javax/xml/bind/JAXBException](https://stackoverflow.com/questions/43574426/java-how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexceptio)
+* [Create a React Native Image Recognition App with Google Vision API](https://blog.jscrambler.com/create-a-react-native-image-recognition-app-with-google-vision-api/)
 
 ---
 
