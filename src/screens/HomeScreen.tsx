@@ -12,17 +12,21 @@ import {
   Text,
   Title,
 } from 'native-base';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet} from 'react-native';
 import {useCameraContext} from '../utils/contexts/CameraContext';
 import useConstants from '../utils/hooks/useConstants';
 import {launchImageLibrary} from 'react-native-image-picker';
+import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
   const cameraContext = useCameraContext();
   const navigation = useNavigation();
   const constants = useConstants();
+  const googleCloudVision = useGoogleCloudVision();
+  const [imgBase64, setImgBase64] = useState<string>();
+  const [result, setResult] = useState<string>();
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
@@ -31,14 +35,33 @@ const HomeScreen = () => {
     navigation.navigate(constants.route.camera);
   };
 
-  const onClearPicture = () => cameraContext.clearUri();
+  const onClearPicture = () => {
+    cameraContext.clearUri();
+    setResult('');
+  };
 
   const onUpload = () => {
     launchImageLibrary(
-      {mediaType: 'photo', quality: 0.5, includeBase64: false},
-      (response) => cameraContext.setUri(response.uri ?? ''),
+      {mediaType: 'photo', quality: 0.5, includeBase64: true},
+      (response) => {
+        cameraContext.setUri(response.uri ?? '');
+        setImgBase64(response.base64 ?? '');
+      },
     );
   };
+
+  useEffect(() => {
+    if (imgBase64) {
+      (async () => {
+        const responseBody = await googleCloudVision.getTextDetection(
+          imgBase64,
+        );
+
+        setResult(responseBody.responses[0].fullTextAnnotation.text);
+      })();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imgBase64]);
 
   return (
     <Container>
@@ -47,7 +70,7 @@ const HomeScreen = () => {
           <Title>{constants.header.home}</Title>
         </Body>
       </Header>
-      <Content style={styles.content}>
+      <Content padder>
         <Card>
           {!cameraContext.getUri() ? (
             <>
@@ -77,6 +100,18 @@ const HomeScreen = () => {
             </>
           )}
         </Card>
+        {!!result && (
+          <Card>
+            <CardItem header>
+              <Text style={styles.cardHeader}>Result</Text>
+            </CardItem>
+            <CardItem>
+              <Body>
+                <Text>{result}</Text>
+              </Body>
+            </CardItem>
+          </Card>
+        )}
       </Content>
       <Fab
         direction="up"
@@ -96,9 +131,6 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  content: {
-    padding: 10,
-  },
   image: {
     height: 350,
     flex: 1,

@@ -1,7 +1,14 @@
+type TResponse = {
+  fullTextAnnotation: {
+    text: string;
+  };
+};
 const useGoogleCloudVision = () => {
   const API_KEY = '';
 
-  const getTextDetection = async (base64: string): Promise<any> => {
+  const getTextDetection = async (
+    base64: string,
+  ): Promise<{responses: TResponse[]}> => {
     try {
       const response = await fetch(
         `https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}`,
@@ -30,8 +37,10 @@ const useGoogleCloudVision = () => {
       const responseBody = await response.json();
 
       console.log('responseBody', responseBody);
+      return responseBody;
     } catch (e) {
       console.error('[useGoogleCloudVision] getTextDetection failed!', e);
+      return {responses: []};
     }
   };
 
