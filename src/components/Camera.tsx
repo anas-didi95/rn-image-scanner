@@ -4,17 +4,22 @@ import React, {useState} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {useCameraContext} from '../utils/contexts/CameraContext';
+import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 
 const Camera = () => {
   const [camera, setCamera] = useState<RNCamera | null>();
   const cameraContext = useCameraContext();
   const navigation = useNavigation();
+  const googleCloudVision = useGoogleCloudVision();
 
   const onSnap = async () => {
     if (camera) {
       const options = {quality: 0.5, base64: true};
       const data = await camera.takePictureAsync(options);
       cameraContext.setUri(data.uri);
+
+      googleCloudVision.getTextDetection(data.base64 ?? '');
+
       navigation.goBack();
     }
   };
