@@ -9,6 +9,7 @@ import {
   Fab,
   Header,
   Icon,
+  Spinner,
   Text,
   Title,
 } from 'native-base';
@@ -38,6 +39,7 @@ const HomeScreen = () => {
   const onClearPicture = () => {
     cameraContext.clearUri();
     setResult('');
+    setImgBase64('');
   };
 
   const onUpload = () => {
@@ -100,16 +102,22 @@ const HomeScreen = () => {
             </>
           )}
         </Card>
-        {!!result && (
+        {!!imgBase64 && (
           <Card>
-            <CardItem header>
-              <Text style={styles.cardHeader}>Result</Text>
-            </CardItem>
-            <CardItem>
-              <Body>
-                <Text>{result}</Text>
-              </Body>
-            </CardItem>
+            {!result ? (
+              <CardItem style={styles.spinner}>
+                <Spinner />
+              </CardItem>
+            ) : (
+              <>
+                <CardItem header>
+                  <Text style={styles.cardHeader}>Result</Text>
+                </CardItem>
+                <CardItem>
+                  <Body>{result ? <Text>{result}</Text> : <Spinner />}</Body>
+                </CardItem>
+              </>
+            )}
           </Card>
         )}
       </Content>
@@ -146,6 +154,9 @@ const styles = StyleSheet.create({
   },
   uploadButton: {
     backgroundColor: '#ff8c00',
+  },
+  spinner: {
+    justifyContent: 'center',
   },
 });
 
