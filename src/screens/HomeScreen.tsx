@@ -19,6 +19,7 @@ import {useCameraContext} from '../utils/contexts/CameraContext';
 import useConstants from '../utils/hooks/useConstants';
 import {launchImageLibrary} from 'react-native-image-picker';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
+import {TEST_VALUE} from 'react-native-dotenv';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
@@ -69,7 +70,9 @@ const HomeScreen = () => {
     <Container>
       <Header noLeft>
         <Body>
-          <Title>{constants.header.home}</Title>
+          <Title>
+            {constants.header.home} {TEST_VALUE ?? 'NOT FOUND'}
+          </Title>
         </Body>
       </Header>
       <Content padder>
