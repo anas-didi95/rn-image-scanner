@@ -6,6 +6,7 @@
 * [General info](#general-info)
 * [Technologies](#technologies)
 * [Features](#features)
+* [Environment Variables](#environment-variables)
 * [Setup](#setup)
 * [References](#references)
 * [Contact](#contact)
@@ -23,6 +24,7 @@ An app to find phone numbers, email and website links available in a photo and t
 * React Navigation - Version 5.9.2
 * React Native Camera - Version 3.42.2
 * React Native Image Picker - Version 3.2.1
+* React Native Dotenv - Version 2.5.3
 
 ---
 
@@ -32,6 +34,15 @@ An app to find phone numbers, email and website links available in a photo and t
 - [ ] If there are any phone numbers, email or web links present in the image then they are listed in the cards properly organized.
 - [ ] On tap on the details, an option is provided to save as contact.
 - [ ] History of search results are provided in the list view
+
+---
+
+## Environment Variables
+Following table is a **mandatory** environment variables used in this project.
+
+| Variable Name | Datatype | Description |
+| --- | --- | --- |
+| GOOGLE_CLOUD_VISION_API_KEY | String | API key for Google Cloud Vision |
 
 ---
 

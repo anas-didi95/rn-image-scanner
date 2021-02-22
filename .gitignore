@@ -1,6 +1,7 @@
 /npm-docker
 /gradle-docker
 *.bak
+.env
 
 # OSX
 #

@@ -1,17 +1,17 @@
+import {GOOGLE_CLOUD_VISION_API_KEY} from '@env';
+
 type TResponse = {
   fullTextAnnotation: {
     text: string;
   };
 };
 const useGoogleCloudVision = () => {
-  const API_KEY = '';
-
   const getTextDetection = async (
     base64: string,
   ): Promise<{responses: TResponse[]}> => {
     try {
       const response = await fetch(
-        `https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}`,
+        `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_CLOUD_VISION_API_KEY}`,
         {
           method: 'POST',
           headers: {
