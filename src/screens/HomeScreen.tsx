@@ -19,7 +19,7 @@ import {useCameraContext} from '../utils/contexts/CameraContext';
 import useConstants from '../utils/hooks/useConstants';
 import {launchImageLibrary} from 'react-native-image-picker';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
-import {TEST_VALUE} from 'react-native-dotenv';
+import {TEST_VALUE, GOOGLE_CLOUD_VISION_API_KEY} from '@env';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
@@ -85,7 +85,10 @@ const HomeScreen = () => {
                 </Text>
               </CardItem>
               <CardItem>
-                <Text>Please snap a picture to start scanner.</Text>
+                <Text>
+                  Please snap a picture to start scanner.{' '}
+                  {GOOGLE_CLOUD_VISION_API_KEY}
+                </Text>
               </CardItem>
             </>
           ) : (
