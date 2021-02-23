@@ -8,6 +8,7 @@ import {
   Fab,
   Header,
   Icon,
+  Right,
   Spinner,
   Text,
   Title,
@@ -148,14 +149,15 @@ const ResultCard: React.FC<{uri: string; result: string}> = ({uri, result}) => (
             <Spinner />
           </CardItem>
         ) : (
-          <>
-            <CardItem header>
-              <Text style={styles.cardHeader}>Result</Text>
-            </CardItem>
-            <CardItem>
-              <Body>{result ? <Text>{result}</Text> : <Spinner />}</Body>
-            </CardItem>
-          </>
+          <CardItem>
+            <Body>
+              <Text style={styles.resultValue}>{result.trimEnd()}</Text>
+              <Text note>Text</Text>
+            </Body>
+            <Right>
+              <Icon name="chevron-forward-outline" />
+            </Right>
+          </CardItem>
         )}
       </Card>
     )}
@@ -181,6 +183,9 @@ const styles = StyleSheet.create({
   },
   spinner: {
     justifyContent: 'center',
+  },
+  resultValue: {
+    fontWeight: '700',
   },
 });
 
