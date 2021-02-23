@@ -1,4 +1,3 @@
-import {useNavigation} from '@react-navigation/native';
 import {
   Body,
   Button,
@@ -17,13 +16,12 @@ import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet} from 'react-native';
 import {useCameraContext} from '../utils/contexts/CameraContext';
 import useConstants from '../utils/hooks/useConstants';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
   const cameraContext = useCameraContext();
-  const navigation = useNavigation();
   const constants = useConstants();
   const googleCloudVision = useGoogleCloudVision();
   const [imgBase64, setImgBase64] = useState<string>();
@@ -33,7 +31,13 @@ const HomeScreen = () => {
 
   const onOpenCamera = () => {
     toggleFabActive();
-    navigation.navigate(constants.route.camera);
+    launchCamera(
+      {mediaType: 'photo', quality: 0.5, includeBase64: true},
+      (image) => {
+        cameraContext.setUri(image.uri ?? '');
+        setImgBase64(image.base64 ?? '');
+      },
+    );
   };
 
   const onClearPicture = () => {
@@ -43,11 +47,12 @@ const HomeScreen = () => {
   };
 
   const onUpload = () => {
+    toggleFabActive();
     launchImageLibrary(
       {mediaType: 'photo', quality: 0.5, includeBase64: true},
-      (response) => {
-        cameraContext.setUri(response.uri ?? '');
-        setImgBase64(response.base64 ?? '');
+      (image) => {
+        cameraContext.setUri(image.uri ?? '');
+        setImgBase64(image.base64 ?? '');
       },
     );
   };
