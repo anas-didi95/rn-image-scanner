@@ -4,8 +4,6 @@ import HomeScreen from './src/screens/HomeScreen';
 import AboutScreen from './src/screens/AboutScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from 'native-base';
-import CameraProvider from './src/utils/contexts/CameraContext';
-import Camera from './src/components/Camera';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Alert, BackHandler} from 'react-native';
 import useConstants from './src/utils/hooks/useConstants';
@@ -65,21 +63,14 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <CameraProvider>
-        <AppStackNavigator.Navigator
-          initialRouteName={constants.route.homeTab.index}>
-          <AppStackNavigator.Screen
-            name={constants.route.homeTab.index}
-            component={HomeTab}
-            options={{header: () => null}}
-          />
-          <AppStackNavigator.Screen
-            name={constants.route.camera}
-            component={Camera}
-            options={{header: () => null}}
-          />
-        </AppStackNavigator.Navigator>
-      </CameraProvider>
+      <AppStackNavigator.Navigator
+        initialRouteName={constants.route.homeTab.index}>
+        <AppStackNavigator.Screen
+          name={constants.route.homeTab.index}
+          component={HomeTab}
+          options={{header: () => null}}
+        />
+      </AppStackNavigator.Navigator>
     </NavigationContainer>
   );
 };

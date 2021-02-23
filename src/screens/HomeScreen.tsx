@@ -1,4 +1,3 @@
-import {useNavigation} from '@react-navigation/native';
 import {
   Body,
   Button,
@@ -15,55 +14,55 @@ import {
 } from 'native-base';
 import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet} from 'react-native';
-import {useCameraContext} from '../utils/contexts/CameraContext';
 import useConstants from '../utils/hooks/useConstants';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
-  const cameraContext = useCameraContext();
-  const navigation = useNavigation();
   const constants = useConstants();
   const googleCloudVision = useGoogleCloudVision();
-  const [imgBase64, setImgBase64] = useState<string>();
-  const [result, setResult] = useState<string>();
+  const [image, setImage] = useState<{uri: string; base64: string}>({
+    uri: '',
+    base64: '',
+  });
+  const [result, setResult] = useState<string>('');
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
   const onOpenCamera = () => {
     toggleFabActive();
-    navigation.navigate(constants.route.camera);
+    launchCamera(
+      {mediaType: 'photo', quality: 0.5, includeBase64: true},
+      ({uri, base64}) => setImage({uri: uri ?? '', base64: base64 ?? ''}),
+    );
   };
 
   const onClearPicture = () => {
-    cameraContext.clearUri();
+    setImage({uri: '', base64: ''});
     setResult('');
-    setImgBase64('');
   };
 
   const onUpload = () => {
+    toggleFabActive();
     launchImageLibrary(
       {mediaType: 'photo', quality: 0.5, includeBase64: true},
-      (response) => {
-        cameraContext.setUri(response.uri ?? '');
-        setImgBase64(response.base64 ?? '');
-      },
+      ({uri, base64}) => setImage({uri: uri ?? '', base64: base64 ?? ''}),
     );
   };
 
   useEffect(() => {
-    if (imgBase64) {
+    if (image.base64) {
       (async () => {
         const responseBody = await googleCloudVision.getTextDetection(
-          imgBase64,
+          image.base64,
         );
 
         setResult(responseBody.responses[0].fullTextAnnotation.text);
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imgBase64]);
+  }, [image.base64]);
 
   return (
     <Container>
@@ -73,53 +72,8 @@ const HomeScreen = () => {
         </Body>
       </Header>
       <Content padder>
-        <Card>
-          {!cameraContext.getUri() ? (
-            <>
-              <CardItem header>
-                <Text style={styles.cardHeader}>
-                  {!cameraContext.getUri() ? 'Instruction' : 'Picture'}
-                </Text>
-              </CardItem>
-              <CardItem>
-                <Text>Please snap a picture to start scanner.</Text>
-              </CardItem>
-            </>
-          ) : (
-            <>
-              <CardItem cardBody>
-                <Image
-                  resizeMode="stretch"
-                  source={{
-                    uri: cameraContext.getUri(),
-                  }}
-                  style={styles.image}
-                />
-              </CardItem>
-              <Button full style={styles.clearButton} onPress={onClearPicture}>
-                <Text>Clear picture</Text>
-              </Button>
-            </>
-          )}
-        </Card>
-        {!!imgBase64 && (
-          <Card>
-            {!result ? (
-              <CardItem style={styles.spinner}>
-                <Spinner />
-              </CardItem>
-            ) : (
-              <>
-                <CardItem header>
-                  <Text style={styles.cardHeader}>Result</Text>
-                </CardItem>
-                <CardItem>
-                  <Body>{result ? <Text>{result}</Text> : <Spinner />}</Body>
-                </CardItem>
-              </>
-            )}
-          </Card>
-        )}
+        <ImagePlaceholderCard onClearPicture={onClearPicture} uri={image.uri} />
+        <ResultCard result={result} uri={image.uri} />
       </Content>
       <Fab
         direction="up"
@@ -138,9 +92,65 @@ const HomeScreen = () => {
   );
 };
 
+const ImagePlaceholderCard: React.FC<{
+  uri: string;
+  onClearPicture: () => void;
+}> = ({uri, onClearPicture}) => (
+  <Card>
+    {!uri ? (
+      <CardItem header>
+        <Body>
+          <Text style={styles.cardHeader}>
+            {!uri ? 'Instruction' : 'Picture'}
+          </Text>
+          <Text>Please snap or choose a picture to start scanner.</Text>
+        </Body>
+      </CardItem>
+    ) : (
+      <>
+        <CardItem cardBody>
+          <Image
+            resizeMode="stretch"
+            source={{
+              uri: uri,
+            }}
+            style={styles.image}
+          />
+        </CardItem>
+        <Button full style={styles.clearButton} onPress={onClearPicture}>
+          <Text>Clear picture</Text>
+        </Button>
+      </>
+    )}
+  </Card>
+);
+
+const ResultCard: React.FC<{uri: string; result: string}> = ({uri, result}) => (
+  <>
+    {!!uri && (
+      <Card>
+        {!result ? (
+          <CardItem style={styles.spinner}>
+            <Spinner />
+          </CardItem>
+        ) : (
+          <>
+            <CardItem header>
+              <Text style={styles.cardHeader}>Result</Text>
+            </CardItem>
+            <CardItem>
+              <Body>{result ? <Text>{result}</Text> : <Spinner />}</Body>
+            </CardItem>
+          </>
+        )}
+      </Card>
+    )}
+  </>
+);
+
 const styles = StyleSheet.create({
   image: {
-    height: 350,
+    height: 300,
     flex: 1,
   },
   cameraButton: {
