@@ -14,17 +14,18 @@ import {
 } from 'native-base';
 import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet} from 'react-native';
-import {useCameraContext} from '../utils/contexts/CameraContext';
 import useConstants from '../utils/hooks/useConstants';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
-  const cameraContext = useCameraContext();
   const constants = useConstants();
   const googleCloudVision = useGoogleCloudVision();
-  const [imgBase64, setImgBase64] = useState<string>();
+  const [image, setImage] = useState<{uri: string; base64: string}>({
+    uri: '',
+    base64: '',
+  });
   const [result, setResult] = useState<string>();
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
@@ -33,42 +34,35 @@ const HomeScreen = () => {
     toggleFabActive();
     launchCamera(
       {mediaType: 'photo', quality: 0.5, includeBase64: true},
-      (image) => {
-        cameraContext.setUri(image.uri ?? '');
-        setImgBase64(image.base64 ?? '');
-      },
+      ({uri, base64}) => setImage({uri: uri ?? '', base64: base64 ?? ''}),
     );
   };
 
   const onClearPicture = () => {
-    cameraContext.clearUri();
+    setImage({uri: '', base64: ''});
     setResult('');
-    setImgBase64('');
   };
 
   const onUpload = () => {
     toggleFabActive();
     launchImageLibrary(
       {mediaType: 'photo', quality: 0.5, includeBase64: true},
-      (image) => {
-        cameraContext.setUri(image.uri ?? '');
-        setImgBase64(image.base64 ?? '');
-      },
+      ({uri, base64}) => setImage({uri: uri ?? '', base64: base64 ?? ''}),
     );
   };
 
   useEffect(() => {
-    if (imgBase64) {
+    if (image.base64) {
       (async () => {
         const responseBody = await googleCloudVision.getTextDetection(
-          imgBase64,
+          image.base64,
         );
 
         setResult(responseBody.responses[0].fullTextAnnotation.text);
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imgBase64]);
+  }, [image.base64]);
 
   return (
     <Container>
@@ -79,11 +73,11 @@ const HomeScreen = () => {
       </Header>
       <Content padder>
         <Card>
-          {!cameraContext.getUri() ? (
+          {!image.uri ? (
             <>
               <CardItem header>
                 <Text style={styles.cardHeader}>
-                  {!cameraContext.getUri() ? 'Instruction' : 'Picture'}
+                  {!image.uri ? 'Instruction' : 'Picture'}
                 </Text>
               </CardItem>
               <CardItem>
@@ -96,7 +90,7 @@ const HomeScreen = () => {
                 <Image
                   resizeMode="stretch"
                   source={{
-                    uri: cameraContext.getUri(),
+                    uri: image.uri,
                   }}
                   style={styles.image}
                 />
@@ -107,7 +101,7 @@ const HomeScreen = () => {
             </>
           )}
         </Card>
-        {!!imgBase64 && (
+        {!!image.uri && (
           <Card>
             {!result ? (
               <CardItem style={styles.spinner}>
