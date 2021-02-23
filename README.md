@@ -22,8 +22,8 @@ An app to find phone numbers, email and website links available in a photo and t
 * React Native - Version 0.63.4
 * Native Base - Version 2.15.2
 * React Navigation - Version 5.9.2
-* React Native Image Picker - Version 3.2.1
 * React Native Dotenv - Version 2.5.3
+* React Native Image Crop Picker - Version 0.36.0
 
 ---
 
