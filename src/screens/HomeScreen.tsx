@@ -15,8 +15,8 @@ import {
 import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet} from 'react-native';
 import useConstants from '../utils/hooks/useConstants';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
+import ImagePicker from 'react-native-image-crop-picker';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
@@ -32,10 +32,12 @@ const HomeScreen = () => {
 
   const onOpenCamera = () => {
     toggleFabActive();
-    launchCamera(
-      {mediaType: 'photo', quality: 0.5, includeBase64: true},
-      ({uri, base64}) => setImage({uri: uri ?? '', base64: base64 ?? ''}),
-    );
+    ImagePicker.openCamera({
+      mediaType: 'photo',
+      cropping: true,
+      compressImageQuality: 0.5,
+      includeBase64: true,
+    }).then(({path, data}) => setImage({uri: path, base64: data ?? ''}));
   };
 
   const onClearPicture = () => {
@@ -45,10 +47,14 @@ const HomeScreen = () => {
 
   const onUpload = () => {
     toggleFabActive();
-    launchImageLibrary(
-      {mediaType: 'photo', quality: 0.5, includeBase64: true},
-      ({uri, base64}) => setImage({uri: uri ?? '', base64: base64 ?? ''}),
-    );
+    ImagePicker.openPicker({
+      cropping: true,
+      compressImageQuality: 0.5,
+      includeBase64: true,
+      mediaType: 'photo',
+    }).then((a) => {
+      setImage({uri: a.path, base64: a.data ?? ''});
+    });
   };
 
   useEffect(() => {
