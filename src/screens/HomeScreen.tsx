@@ -8,6 +8,7 @@ import {
   Fab,
   Header,
   Icon,
+  Right,
   Spinner,
   Text,
   Title,
@@ -15,8 +16,8 @@ import {
 import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet} from 'react-native';
 import useConstants from '../utils/hooks/useConstants';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
+import ImagePicker from 'react-native-image-crop-picker';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
@@ -30,25 +31,39 @@ const HomeScreen = () => {
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
-  const onOpenCamera = () => {
-    toggleFabActive();
-    launchCamera(
-      {mediaType: 'photo', quality: 0.5, includeBase64: true},
-      ({uri, base64}) => setImage({uri: uri ?? '', base64: base64 ?? ''}),
-    );
+  const onOpenCamera = async () => {
+    try {
+      toggleFabActive();
+      const cropImage = await ImagePicker.openCamera({
+        mediaType: 'photo',
+        cropping: true,
+        compressImageQuality: 0.5,
+        includeBase64: true,
+      });
+      setImage({uri: cropImage.path, base64: cropImage.data ?? ''});
+    } catch (e) {
+      console.error('[HomeScreen] onOpenCamera failed!', e);
+    }
+  };
+
+  const onUpload = async () => {
+    try {
+      toggleFabActive();
+      const cropImage = await ImagePicker.openPicker({
+        cropping: true,
+        compressImageQuality: 0.5,
+        includeBase64: true,
+        mediaType: 'photo',
+      });
+      setImage({uri: cropImage.path, base64: cropImage.data ?? ''});
+    } catch (e) {
+      console.error('[HomeScreen] onUpload failed!', e);
+    }
   };
 
   const onClearPicture = () => {
     setImage({uri: '', base64: ''});
     setResult('');
-  };
-
-  const onUpload = () => {
-    toggleFabActive();
-    launchImageLibrary(
-      {mediaType: 'photo', quality: 0.5, includeBase64: true},
-      ({uri, base64}) => setImage({uri: uri ?? '', base64: base64 ?? ''}),
-    );
   };
 
   useEffect(() => {
@@ -134,14 +149,15 @@ const ResultCard: React.FC<{uri: string; result: string}> = ({uri, result}) => (
             <Spinner />
           </CardItem>
         ) : (
-          <>
-            <CardItem header>
-              <Text style={styles.cardHeader}>Result</Text>
-            </CardItem>
-            <CardItem>
-              <Body>{result ? <Text>{result}</Text> : <Spinner />}</Body>
-            </CardItem>
-          </>
+          <CardItem>
+            <Body>
+              <Text style={styles.resultValue}>{result.trimEnd()}</Text>
+              <Text note>Text</Text>
+            </Body>
+            <Right>
+              <Icon name="chevron-forward-outline" />
+            </Right>
+          </CardItem>
         )}
       </Card>
     )}
@@ -167,6 +183,9 @@ const styles = StyleSheet.create({
   },
   spinner: {
     justifyContent: 'center',
+  },
+  resultValue: {
+    fontWeight: '700',
   },
 });
 
