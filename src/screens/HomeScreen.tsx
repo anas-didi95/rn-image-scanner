@@ -30,31 +30,39 @@ const HomeScreen = () => {
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
-  const onOpenCamera = () => {
-    toggleFabActive();
-    ImagePicker.openCamera({
-      mediaType: 'photo',
-      cropping: true,
-      compressImageQuality: 0.5,
-      includeBase64: true,
-    }).then(({path, data}) => setImage({uri: path, base64: data ?? ''}));
+  const onOpenCamera = async () => {
+    try {
+      toggleFabActive();
+      const cropImage = await ImagePicker.openCamera({
+        mediaType: 'photo',
+        cropping: true,
+        compressImageQuality: 0.5,
+        includeBase64: true,
+      });
+      setImage({uri: cropImage.path, base64: cropImage.data ?? ''});
+    } catch (e) {
+      console.error('[HomeScreen] onOpenCamera failed!', e);
+    }
+  };
+
+  const onUpload = async () => {
+    try {
+      toggleFabActive();
+      const cropImage = await ImagePicker.openPicker({
+        cropping: true,
+        compressImageQuality: 0.5,
+        includeBase64: true,
+        mediaType: 'photo',
+      });
+      setImage({uri: cropImage.path, base64: cropImage.data ?? ''});
+    } catch (e) {
+      console.error('[HomeScreen] onUpload failed!', e);
+    }
   };
 
   const onClearPicture = () => {
     setImage({uri: '', base64: ''});
     setResult('');
-  };
-
-  const onUpload = () => {
-    toggleFabActive();
-    ImagePicker.openPicker({
-      cropping: true,
-      compressImageQuality: 0.5,
-      includeBase64: true,
-      mediaType: 'photo',
-    }).then((a) => {
-      setImage({uri: a.path, base64: a.data ?? ''});
-    });
   };
 
   useEffect(() => {
