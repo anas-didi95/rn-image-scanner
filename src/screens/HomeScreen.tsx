@@ -26,7 +26,7 @@ const HomeScreen = () => {
     uri: '',
     base64: '',
   });
-  const [result, setResult] = useState<string>();
+  const [result, setResult] = useState<string>('');
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
@@ -72,53 +72,8 @@ const HomeScreen = () => {
         </Body>
       </Header>
       <Content padder>
-        <Card>
-          {!image.uri ? (
-            <>
-              <CardItem header>
-                <Text style={styles.cardHeader}>
-                  {!image.uri ? 'Instruction' : 'Picture'}
-                </Text>
-              </CardItem>
-              <CardItem>
-                <Text>Please snap a picture to start scanner.</Text>
-              </CardItem>
-            </>
-          ) : (
-            <>
-              <CardItem cardBody>
-                <Image
-                  resizeMode="stretch"
-                  source={{
-                    uri: image.uri,
-                  }}
-                  style={styles.image}
-                />
-              </CardItem>
-              <Button full style={styles.clearButton} onPress={onClearPicture}>
-                <Text>Clear picture</Text>
-              </Button>
-            </>
-          )}
-        </Card>
-        {!!image.uri && (
-          <Card>
-            {!result ? (
-              <CardItem style={styles.spinner}>
-                <Spinner />
-              </CardItem>
-            ) : (
-              <>
-                <CardItem header>
-                  <Text style={styles.cardHeader}>Result</Text>
-                </CardItem>
-                <CardItem>
-                  <Body>{result ? <Text>{result}</Text> : <Spinner />}</Body>
-                </CardItem>
-              </>
-            )}
-          </Card>
-        )}
+        <ImagePlaceholderCard onClearPicture={onClearPicture} uri={image.uri} />
+        <ResultCard result={result} uri={image.uri} />
       </Content>
       <Fab
         direction="up"
@@ -137,9 +92,65 @@ const HomeScreen = () => {
   );
 };
 
+const ImagePlaceholderCard: React.FC<{
+  uri: string;
+  onClearPicture: () => void;
+}> = ({uri, onClearPicture}) => (
+  <Card>
+    {!uri ? (
+      <CardItem header>
+        <Body>
+          <Text style={styles.cardHeader}>
+            {!uri ? 'Instruction' : 'Picture'}
+          </Text>
+          <Text>Please snap or choose a picture to start scanner.</Text>
+        </Body>
+      </CardItem>
+    ) : (
+      <>
+        <CardItem cardBody>
+          <Image
+            resizeMode="stretch"
+            source={{
+              uri: uri,
+            }}
+            style={styles.image}
+          />
+        </CardItem>
+        <Button full style={styles.clearButton} onPress={onClearPicture}>
+          <Text>Clear picture</Text>
+        </Button>
+      </>
+    )}
+  </Card>
+);
+
+const ResultCard: React.FC<{uri: string; result: string}> = ({uri, result}) => (
+  <>
+    {!!uri && (
+      <Card>
+        {!result ? (
+          <CardItem style={styles.spinner}>
+            <Spinner />
+          </CardItem>
+        ) : (
+          <>
+            <CardItem header>
+              <Text style={styles.cardHeader}>Result</Text>
+            </CardItem>
+            <CardItem>
+              <Body>{result ? <Text>{result}</Text> : <Spinner />}</Body>
+            </CardItem>
+          </>
+        )}
+      </Card>
+    )}
+  </>
+);
+
 const styles = StyleSheet.create({
   image: {
-    height: 350,
+    height: 300,
     flex: 1,
   },
   cameraButton: {
