@@ -5,19 +5,11 @@ const useValidate = () => {
   const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   const isPhoneNumber = (phone: string): boolean => {
-    if (phoneRegex.test(phone.replace(phoneRemoveCharRegex, ''))) {
-      return true;
-    }
-
-    return false;
+    return phoneRegex.test(phone.replace(phoneRemoveCharRegex, ''));
   };
 
   const isEmail = (email: string): boolean => {
-    if (emailRegex.test(email.replace(emailRemoveCharRegex, ''))) {
-      return true;
-    }
-
-    return false;
+    return emailRegex.test(email.replace(emailRemoveCharRegex, ''));
   };
 
   const getType = (value: string): string => {
