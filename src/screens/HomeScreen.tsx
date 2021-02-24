@@ -28,7 +28,7 @@ const HomeScreen = () => {
     uri: '',
     base64: '',
   });
-  const [result, setResult] = useState<string>('');
+  const [resultList, setResultList] = useState<string[]>([]);
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
@@ -64,7 +64,7 @@ const HomeScreen = () => {
 
   const onClearPicture = () => {
     setImage({uri: '', base64: ''});
-    setResult('');
+    setResultList([]);
   };
 
   useEffect(() => {
@@ -73,8 +73,11 @@ const HomeScreen = () => {
         const responseBody = await googleCloudVision.getTextDetection(
           image.base64,
         );
+        const textList = responseBody.responses[0].textAnnotations.map(
+          (text) => text.description,
+        );
 
-        setResult(responseBody.responses[0].fullTextAnnotation.text);
+        setResultList(textList);
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,7 +92,7 @@ const HomeScreen = () => {
       </Header>
       <Content padder>
         <ImagePlaceholderCard onClearPicture={onClearPicture} uri={image.uri} />
-        <ResultCard result={result} uri={image.uri} />
+        <ResultCard resultList={resultList} uri={image.uri} />
       </Content>
       <Fab
         direction="up"
@@ -141,27 +144,34 @@ const ImagePlaceholderCard: React.FC<{
   </Card>
 );
 
-const ResultCard: React.FC<{uri: string; result: string}> = ({uri, result}) => {
+const ResultCard: React.FC<{uri: string; resultList: string[]}> = ({
+  uri,
+  resultList,
+}) => {
   const validate = useValidate();
 
   return (
     <>
       {!!uri && (
         <Card>
-          {!result ? (
+          {!resultList || resultList.length === 0 ? (
             <CardItem style={styles.spinner}>
               <Spinner />
             </CardItem>
           ) : (
-            <CardItem>
-              <Body>
-                <Text style={styles.resultValue}>{result.trimEnd()}</Text>
-                <Text note>{validate.getType(result)}</Text>
-              </Body>
-              <Right>
-                <Icon name="chevron-forward-outline" />
-              </Right>
-            </CardItem>
+            <>
+              {resultList.map((result) => (
+                <CardItem>
+                  <Body>
+                    <Text style={styles.resultValue}>{result.trimEnd()}</Text>
+                    <Text note>{validate.getType(result)}</Text>
+                  </Body>
+                  <Right>
+                    <Icon name="chevron-forward-outline" />
+                  </Right>
+                </CardItem>
+              ))}
+            </>
           )}
         </Card>
       )}
