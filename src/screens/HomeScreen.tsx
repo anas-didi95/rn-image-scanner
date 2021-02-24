@@ -18,6 +18,7 @@ import {Image, StyleSheet} from 'react-native';
 import useConstants from '../utils/hooks/useConstants';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 import ImagePicker from 'react-native-image-crop-picker';
+import useValidate from '../utils/hooks/useValidate';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
@@ -140,29 +141,33 @@ const ImagePlaceholderCard: React.FC<{
   </Card>
 );
 
-const ResultCard: React.FC<{uri: string; result: string}> = ({uri, result}) => (
-  <>
-    {!!uri && (
-      <Card>
-        {!result ? (
-          <CardItem style={styles.spinner}>
-            <Spinner />
-          </CardItem>
-        ) : (
-          <CardItem>
-            <Body>
-              <Text style={styles.resultValue}>{result.trimEnd()}</Text>
-              <Text note>Text</Text>
-            </Body>
-            <Right>
-              <Icon name="chevron-forward-outline" />
-            </Right>
-          </CardItem>
-        )}
-      </Card>
-    )}
-  </>
-);
+const ResultCard: React.FC<{uri: string; result: string}> = ({uri, result}) => {
+  const validate = useValidate();
+
+  return (
+    <>
+      {!!uri && (
+        <Card>
+          {!result ? (
+            <CardItem style={styles.spinner}>
+              <Spinner />
+            </CardItem>
+          ) : (
+            <CardItem>
+              <Body>
+                <Text style={styles.resultValue}>{result.trimEnd()}</Text>
+                <Text note>{validate.getType(result)}</Text>
+              </Body>
+              <Right>
+                <Icon name="chevron-forward-outline" />
+              </Right>
+            </CardItem>
+          )}
+        </Card>
+      )}
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   image: {
