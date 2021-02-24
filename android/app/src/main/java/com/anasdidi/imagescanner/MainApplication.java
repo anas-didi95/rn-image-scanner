@@ -1,4 +1,4 @@
-package com.a;
+package com.anasdidi.imagescanner;
 
 import android.app.Application;
 import android.content.Context;
