@@ -129,7 +129,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.a"
+        applicationId "com.anasdidi.imagescanner"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
