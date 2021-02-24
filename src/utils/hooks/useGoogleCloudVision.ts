@@ -4,6 +4,10 @@ type TResponse = {
   fullTextAnnotation: {
     text: string;
   };
+  textAnnotations: {
+    locale?: string;
+    description: string;
+  }[];
 };
 const useGoogleCloudVision = () => {
   const getTextDetection = async (

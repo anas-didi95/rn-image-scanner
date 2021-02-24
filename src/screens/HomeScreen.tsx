@@ -18,16 +18,22 @@ import {Image, StyleSheet} from 'react-native';
 import useConstants from '../utils/hooks/useConstants';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 import ImagePicker from 'react-native-image-crop-picker';
+import useValidate from '../utils/hooks/useValidate';
 
+type TResult = {
+  value: string;
+  type: string;
+};
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
   const constants = useConstants();
   const googleCloudVision = useGoogleCloudVision();
+  const validate = useValidate();
   const [image, setImage] = useState<{uri: string; base64: string}>({
     uri: '',
     base64: '',
   });
-  const [result, setResult] = useState<string>('');
+  const [resultList, setResultList] = useState<TResult[]>([]);
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
@@ -63,7 +69,7 @@ const HomeScreen = () => {
 
   const onClearPicture = () => {
     setImage({uri: '', base64: ''});
-    setResult('');
+    setResultList([]);
   };
 
   useEffect(() => {
@@ -72,8 +78,14 @@ const HomeScreen = () => {
         const responseBody = await googleCloudVision.getTextDetection(
           image.base64,
         );
+        const textList: TResult[] = responseBody.responses[0].textAnnotations
+          .filter((text) => !text.locale)
+          .map((text) => ({
+            type: validate.getType(text.description),
+            value: text.description,
+          }));
 
-        setResult(responseBody.responses[0].fullTextAnnotation.text);
+        setResultList(textList);
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -88,7 +100,7 @@ const HomeScreen = () => {
       </Header>
       <Content padder>
         <ImagePlaceholderCard onClearPicture={onClearPicture} uri={image.uri} />
-        <ResultCard result={result} uri={image.uri} />
+        <ResultCard resultList={resultList} uri={image.uri} />
       </Content>
       <Fab
         direction="up"
@@ -140,24 +152,31 @@ const ImagePlaceholderCard: React.FC<{
   </Card>
 );
 
-const ResultCard: React.FC<{uri: string; result: string}> = ({uri, result}) => (
+const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
+  uri,
+  resultList,
+}) => (
   <>
     {!!uri && (
       <Card>
-        {!result ? (
+        {!resultList || resultList.length === 0 ? (
           <CardItem style={styles.spinner}>
             <Spinner />
           </CardItem>
         ) : (
-          <CardItem>
-            <Body>
-              <Text style={styles.resultValue}>{result.trimEnd()}</Text>
-              <Text note>Text</Text>
-            </Body>
-            <Right>
-              <Icon name="chevron-forward-outline" />
-            </Right>
-          </CardItem>
+          <>
+            {resultList.map((result) => (
+              <CardItem>
+                <Body>
+                  <Text style={styles.resultValue}>{result.value}</Text>
+                  <Text note>{result.type}</Text>
+                </Body>
+                <Right>
+                  <Icon name="chevron-forward-outline" />
+                </Right>
+              </CardItem>
+            ))}
+          </>
         )}
       </Card>
     )}
