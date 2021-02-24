@@ -40,7 +40,6 @@ const useGoogleCloudVision = () => {
       );
       const responseBody = await response.json();
 
-      console.log('responseBody', responseBody);
       return responseBody;
     } catch (e) {
       console.error('[useGoogleCloudVision] getTextDetection failed!', e);

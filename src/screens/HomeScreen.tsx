@@ -20,15 +20,20 @@ import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 import ImagePicker from 'react-native-image-crop-picker';
 import useValidate from '../utils/hooks/useValidate';
 
+type TResult = {
+  value: string;
+  type: string;
+};
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
   const constants = useConstants();
   const googleCloudVision = useGoogleCloudVision();
+  const validate = useValidate();
   const [image, setImage] = useState<{uri: string; base64: string}>({
     uri: '',
     base64: '',
   });
-  const [resultList, setResultList] = useState<string[]>([]);
+  const [resultList, setResultList] = useState<TResult[]>([]);
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
@@ -73,9 +78,12 @@ const HomeScreen = () => {
         const responseBody = await googleCloudVision.getTextDetection(
           image.base64,
         );
-        const textList = responseBody.responses[0].textAnnotations
+        const textList: TResult[] = responseBody.responses[0].textAnnotations
           .filter((text) => !text.locale)
-          .map((text) => text.description);
+          .map((text) => ({
+            type: validate.getType(text.description),
+            value: text.description,
+          }));
 
         setResultList(textList);
       })();
@@ -144,40 +152,36 @@ const ImagePlaceholderCard: React.FC<{
   </Card>
 );
 
-const ResultCard: React.FC<{uri: string; resultList: string[]}> = ({
+const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
   uri,
   resultList,
-}) => {
-  const validate = useValidate();
-
-  return (
-    <>
-      {!!uri && (
-        <Card>
-          {!resultList || resultList.length === 0 ? (
-            <CardItem style={styles.spinner}>
-              <Spinner />
-            </CardItem>
-          ) : (
-            <>
-              {resultList.map((result) => (
-                <CardItem>
-                  <Body>
-                    <Text style={styles.resultValue}>{result.trimEnd()}</Text>
-                    <Text note>{validate.getType(result)}</Text>
-                  </Body>
-                  <Right>
-                    <Icon name="chevron-forward-outline" />
-                  </Right>
-                </CardItem>
-              ))}
-            </>
-          )}
-        </Card>
-      )}
-    </>
-  );
-};
+}) => (
+  <>
+    {!!uri && (
+      <Card>
+        {!resultList || resultList.length === 0 ? (
+          <CardItem style={styles.spinner}>
+            <Spinner />
+          </CardItem>
+        ) : (
+          <>
+            {resultList.map((result) => (
+              <CardItem>
+                <Body>
+                  <Text style={styles.resultValue}>{result.value}</Text>
+                  <Text note>{result.type}</Text>
+                </Body>
+                <Right>
+                  <Icon name="chevron-forward-outline" />
+                </Right>
+              </CardItem>
+            ))}
+          </>
+        )}
+      </Card>
+    )}
+  </>
+);
 
 const styles = StyleSheet.create({
   image: {
