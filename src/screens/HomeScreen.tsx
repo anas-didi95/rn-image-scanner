@@ -73,9 +73,9 @@ const HomeScreen = () => {
         const responseBody = await googleCloudVision.getTextDetection(
           image.base64,
         );
-        const textList = responseBody.responses[0].textAnnotations.map(
-          (text) => text.description,
-        );
+        const textList = responseBody.responses[0].textAnnotations
+          .filter((text) => !text.locale)
+          .map((text) => text.description);
 
         setResultList(textList);
       })();

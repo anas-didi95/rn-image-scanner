@@ -5,6 +5,7 @@ type TResponse = {
     text: string;
   };
   textAnnotations: {
+    locale?: string;
     description: string;
   }[];
 };
