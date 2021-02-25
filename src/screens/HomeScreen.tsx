@@ -14,7 +14,7 @@ import {
   Title,
 } from 'native-base';
 import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet} from 'react-native';
+import {Image, Linking, StyleSheet} from 'react-native';
 import useConstants from '../utils/hooks/useConstants';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -157,33 +157,47 @@ const ImagePlaceholderCard: React.FC<{
 const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
   uri,
   resultList,
-}) => (
-  <>
-    {!!uri && (
-      <Card>
-        {!resultList || resultList.length === 0 ? (
-          <CardItem style={styles.spinner}>
-            <Spinner />
-          </CardItem>
-        ) : (
-          <>
-            {resultList.map((result, idx) => (
-              <CardItem key={`idx${idx}`}>
-                <Body>
-                  <Text style={styles.resultValue}>{result.value}</Text>
-                  <Text note>{result.type}</Text>
-                </Body>
-                <Right>
-                  <Icon name="chevron-forward-outline" />
-                </Right>
-              </CardItem>
-            ))}
-          </>
-        )}
-      </Card>
-    )}
-  </>
-);
+}) => {
+  const onPress = async () => {
+    console.log('HELLO');
+    const url = 'tel:0187601343';
+    const supported = await Linking.canOpenURL(url);
+
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      console.error('[ResultList] onPress failed! URL not supported! ', url);
+    }
+  };
+
+  return (
+    <>
+      {!!uri && (
+        <Card>
+          {!resultList || resultList.length === 0 ? (
+            <CardItem style={styles.spinner}>
+              <Spinner />
+            </CardItem>
+          ) : (
+            <>
+              {resultList.map((result, idx) => (
+                <CardItem key={`idx${idx}`} button onPress={onPress}>
+                  <Body>
+                    <Text style={styles.resultValue}>{result.value}</Text>
+                    <Text note>{result.type}</Text>
+                  </Body>
+                  <Right>
+                    <Icon name="chevron-forward-outline" />
+                  </Right>
+                </CardItem>
+              ))}
+            </>
+          )}
+        </Card>
+      )}
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   image: {
