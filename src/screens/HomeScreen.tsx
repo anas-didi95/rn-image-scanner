@@ -48,7 +48,7 @@ const HomeScreen = () => {
       });
       setImage({uri: cropImage.path, base64: cropImage.data ?? ''});
     } catch (e) {
-      console.error('[HomeScreen] onOpenCamera failed!', e);
+      console.log('[HomeScreen] onOpenCamera failed!', e);
     }
   };
 
@@ -63,7 +63,7 @@ const HomeScreen = () => {
       });
       setImage({uri: cropImage.path, base64: cropImage.data ?? ''});
     } catch (e) {
-      console.error('[HomeScreen] onUpload failed!', e);
+      console.log('[HomeScreen] onUpload failed!', e);
     }
   };
 
@@ -75,6 +75,8 @@ const HomeScreen = () => {
   useEffect(() => {
     if (image.base64) {
       (async () => {
+        setResultList([]);
+
         const responseBody = await googleCloudVision.getTextDetection(
           image.base64,
         );

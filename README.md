@@ -30,7 +30,7 @@ An app to find phone numbers, email and website links available in a photo and t
 ## Features
 - [x] User can either click a photo or upload a photo from the gallery
 - [x] Processing is done on the image.
-- [ ] If there are any phone numbers, email or web links present in the image then they are listed in the cards properly organized.
+- [x] If there are any phone numbers, email or web links present in the image then they are listed in the cards properly organized.
 - [ ] On tap on the details, an option is provided to save as contact.
 - [ ] History of search results are provided in the list view
 
