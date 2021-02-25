@@ -165,8 +165,8 @@ const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
           </CardItem>
         ) : (
           <>
-            {resultList.map((result) => (
-              <CardItem>
+            {resultList.map((result, idx) => (
+              <CardItem key={`idx${idx}`}>
                 <Body>
                   <Text style={styles.resultValue}>{result.value}</Text>
                   <Text note>{result.type}</Text>
