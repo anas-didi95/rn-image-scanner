@@ -158,11 +158,11 @@ const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
   uri,
   resultList,
 }) => {
-  const onPress = async () => {
-    const url = 'tel:0187601343';
+  const onPress = async (result: TResult) => {
+    const url = `tel:${result.value}`;
     const supported = await Linking.canOpenURL(url);
 
-    if (supported) {
+    if (supported && result.type === 'Phone') {
       Alert.alert('Confirm Action', 'Continue to open phone app?', [
         {
           text: 'Cancel',
@@ -190,7 +190,10 @@ const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
           ) : (
             <>
               {resultList.map((result, idx) => (
-                <CardItem key={`idx${idx}`} button onPress={onPress}>
+                <CardItem
+                  key={`idx${idx}`}
+                  button
+                  onPress={() => onPress(result)}>
                   <Body>
                     <Text style={styles.resultValue}>{result.value}</Text>
                     <Text note>{result.type}</Text>
