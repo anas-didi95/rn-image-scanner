@@ -75,6 +75,8 @@ const HomeScreen = () => {
   useEffect(() => {
     if (image.base64) {
       (async () => {
+        setResultList([]);
+
         const responseBody = await googleCloudVision.getTextDetection(
           image.base64,
         );
