@@ -14,7 +14,7 @@ import {
   Title,
 } from 'native-base';
 import React, {useEffect, useState} from 'react';
-import {Image, Linking, StyleSheet} from 'react-native';
+import {Alert, Image, Linking, StyleSheet} from 'react-native';
 import useConstants from '../utils/hooks/useConstants';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -159,12 +159,21 @@ const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
   resultList,
 }) => {
   const onPress = async () => {
-    console.log('HELLO');
     const url = 'tel:0187601343';
     const supported = await Linking.canOpenURL(url);
 
     if (supported) {
-      await Linking.openURL(url);
+      Alert.alert('Confirm Action', 'Continue to open phone app?', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => Linking.openURL(url),
+          style: 'default',
+        },
+      ]);
     } else {
       console.error('[ResultList] onPress failed! URL not supported! ', url);
     }
