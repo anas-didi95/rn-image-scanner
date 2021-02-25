@@ -19,11 +19,8 @@ import useConstants from '../utils/hooks/useConstants';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 import ImagePicker from 'react-native-image-crop-picker';
 import useValidate from '../utils/hooks/useValidate';
+import {TResult} from '../utils/types';
 
-type TResult = {
-  value: string;
-  type: string;
-};
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
   const constants = useConstants();
