@@ -156,11 +156,21 @@ const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
   resultList,
 }) => {
   const onPress = async (result: TResult) => {
-    const url = `tel:${result.value}`;
-    const supported = await Linking.canOpenURL(url);
+    let url = '';
+    let supported = false;
+    let message = '';
 
-    if (supported && result.type === 'Phone') {
-      Alert.alert('Confirm Action', 'Continue to open phone app?', [
+    if (result.type === 'Phone') {
+      url = `tel:${result.value}`;
+      message = 'Continue to open phone app?';
+    } else if (result.type === 'Email') {
+      url = `mailto:${result.value}`;
+      message = 'Continue to open email app?';
+    }
+
+    supported = await Linking.canOpenURL(url);
+    if (supported) {
+      Alert.alert('Confirm Action', message, [
         {
           text: 'Cancel',
           style: 'cancel',
