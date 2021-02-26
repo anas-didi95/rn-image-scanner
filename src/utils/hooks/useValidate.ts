@@ -1,3 +1,5 @@
+import {EType} from '../types';
+
 const useValidate = () => {
   const phoneRemoveCharRegex = /[-\s]/g;
   const phoneRegex = /^\+?[\d]{10,11}$/;
@@ -18,7 +20,7 @@ const useValidate = () => {
     return webLinkRegex.test(webLink.replace(webLinkRemoveCharRegex, ''));
   };
 
-  const getType = (value: string): string => {
+  const getType = (value: string): EType => {
     if (isPhoneNumber(value)) {
       return 'Phone';
     } else if (isEmail(value)) {
@@ -30,7 +32,7 @@ const useValidate = () => {
     return 'Text';
   };
 
-  return {isPhoneNumber, isEmail, getType};
+  return {isPhoneNumber, isEmail, isWebLink, getType};
 };
 
 export default useValidate;

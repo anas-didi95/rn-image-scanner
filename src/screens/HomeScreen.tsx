@@ -14,16 +14,13 @@ import {
   Title,
 } from 'native-base';
 import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet} from 'react-native';
+import {Alert, Image, Linking, StyleSheet} from 'react-native';
 import useConstants from '../utils/hooks/useConstants';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 import ImagePicker from 'react-native-image-crop-picker';
 import useValidate from '../utils/hooks/useValidate';
+import {TResult} from '../utils/types';
 
-type TResult = {
-  value: string;
-  type: string;
-};
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
   const constants = useConstants();
@@ -157,33 +154,59 @@ const ImagePlaceholderCard: React.FC<{
 const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
   uri,
   resultList,
-}) => (
-  <>
-    {!!uri && (
-      <Card>
-        {!resultList || resultList.length === 0 ? (
-          <CardItem style={styles.spinner}>
-            <Spinner />
-          </CardItem>
-        ) : (
-          <>
-            {resultList.map((result, idx) => (
-              <CardItem key={`idx${idx}`}>
-                <Body>
-                  <Text style={styles.resultValue}>{result.value}</Text>
-                  <Text note>{result.type}</Text>
-                </Body>
-                <Right>
-                  <Icon name="chevron-forward-outline" />
-                </Right>
-              </CardItem>
-            ))}
-          </>
-        )}
-      </Card>
-    )}
-  </>
-);
+}) => {
+  const onPress = async (result: TResult) => {
+    const url = `tel:${result.value}`;
+    const supported = await Linking.canOpenURL(url);
+
+    if (supported && result.type === 'Phone') {
+      Alert.alert('Confirm Action', 'Continue to open phone app?', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => Linking.openURL(url),
+          style: 'default',
+        },
+      ]);
+    } else {
+      console.error('[ResultList] onPress failed! URL not supported! ', url);
+    }
+  };
+
+  return (
+    <>
+      {!!uri && (
+        <Card>
+          {!resultList || resultList.length === 0 ? (
+            <CardItem style={styles.spinner}>
+              <Spinner />
+            </CardItem>
+          ) : (
+            <>
+              {resultList.map((result, idx) => (
+                <CardItem
+                  key={`idx${idx}`}
+                  button
+                  onPress={() => onPress(result)}>
+                  <Body>
+                    <Text style={styles.resultValue}>{result.value}</Text>
+                    <Text note>{result.type}</Text>
+                  </Body>
+                  <Right>
+                    <Icon name="chevron-forward-outline" />
+                  </Right>
+                </CardItem>
+              ))}
+            </>
+          )}
+        </Card>
+      )}
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   image: {
