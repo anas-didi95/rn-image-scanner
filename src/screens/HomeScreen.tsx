@@ -156,33 +156,37 @@ const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
   resultList,
 }) => {
   const onPress = async (result: TResult) => {
-    let url = '';
-    let supported = false;
-    let message = '';
+    try {
+      let url = '';
+      let supported = false;
+      let message = '';
 
-    if (result.type === 'Phone') {
-      url = `tel:${result.value}`;
-      message = 'Continue to open phone app?';
-    } else if (result.type === 'Email') {
-      url = `mailto:${result.value}`;
-      message = 'Continue to open email app?';
-    }
+      if (result.type === 'Phone') {
+        url = `tel:${result.value}`;
+        message = 'Continue to open phone app?';
+      } else if (result.type === 'Email') {
+        url = `mailto:${result.value}`;
+        message = 'Continue to open email app?';
+      }
 
-    supported = await Linking.canOpenURL(url);
-    if (supported) {
-      Alert.alert('Confirm Action', message, [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: () => Linking.openURL(url),
-          style: 'default',
-        },
-      ]);
-    } else {
-      console.error('[ResultList] onPress failed! URL not supported! ', url);
+      supported = await Linking.canOpenURL(url);
+      if (supported) {
+        Alert.alert('Confirm Action', message, [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: () => Linking.openURL(url),
+            style: 'default',
+          },
+        ]);
+      } else {
+        console.error('[ResultList] onPress failed! URL not supported! ', url);
+      }
+    } catch (e) {
+      console.log('[ResultList] onPress failed!', e);
     }
   };
 
