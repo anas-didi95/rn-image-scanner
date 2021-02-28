@@ -167,6 +167,9 @@ const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
       } else if (result.type === 'Email') {
         url = `mailto:${result.value}`;
         message = 'Continue to open email app?';
+      } else if (result.type === 'Web Link') {
+        url = result.value;
+        message = 'Continue to open web browser?';
       }
 
       supported = await Linking.canOpenURL(url);
