@@ -2,6 +2,7 @@
 /gradle-docker
 *.bak
 .env
+google-services.json
 
 # OSX
 #
