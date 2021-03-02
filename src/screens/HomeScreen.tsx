@@ -20,6 +20,7 @@ import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 import ImagePicker from 'react-native-image-crop-picker';
 import useValidate from '../utils/hooks/useValidate';
 import {TResult} from '../utils/types';
+import useFirebase from '../utils/hooks/useFirebase';
 
 const HomeScreen = () => {
   const [isFabActive, setFabActive] = useState<boolean>(false);
@@ -31,6 +32,7 @@ const HomeScreen = () => {
     base64: '',
   });
   const [resultList, setResultList] = useState<TResult[]>([]);
+  const firebase = useFirebase();
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
@@ -73,6 +75,12 @@ const HomeScreen = () => {
     if (image.base64) {
       (async () => {
         setResultList([]);
+
+        const imageRef = await firebase.saveImage(image.uri);
+        console.log('imageRef', imageRef);
+
+        const downloadURL = await firebase.getDownloadURL(imageRef);
+        console.log('downloadURL', downloadURL);
 
         const responseBody = await googleCloudVision.getTextDetection(
           image.base64,
