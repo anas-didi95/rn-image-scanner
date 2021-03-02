@@ -27,10 +27,7 @@ const HomeScreen = () => {
   const constants = useConstants();
   const googleCloudVision = useGoogleCloudVision();
   const validate = useValidate();
-  const [image, setImage] = useState<{uri: string; base64: string}>({
-    uri: '',
-    base64: '',
-  });
+  const [image, setImage] = useState<{uri: string}>({uri: ''});
   const [resultList, setResultList] = useState<TResult[]>([]);
   const firebase = useFirebase();
 
@@ -43,9 +40,9 @@ const HomeScreen = () => {
         mediaType: 'photo',
         cropping: true,
         compressImageQuality: 0.5,
-        includeBase64: true,
+        includeBase64: false,
       });
-      setImage({uri: cropImage.path, base64: cropImage.data ?? ''});
+      setImage({uri: cropImage.path});
     } catch (e) {
       console.log('[HomeScreen] onOpenCamera failed!', e);
     }
@@ -57,22 +54,22 @@ const HomeScreen = () => {
       const cropImage = await ImagePicker.openPicker({
         cropping: true,
         compressImageQuality: 0.5,
-        includeBase64: true,
+        includeBase64: false,
         mediaType: 'photo',
       });
-      setImage({uri: cropImage.path, base64: cropImage.data ?? ''});
+      setImage({uri: cropImage.path});
     } catch (e) {
       console.log('[HomeScreen] onUpload failed!', e);
     }
   };
 
   const onClearPicture = () => {
-    setImage({uri: '', base64: ''});
+    setImage({uri: ''});
     setResultList([]);
   };
 
   useEffect(() => {
-    if (image.base64) {
+    if (image.uri) {
       (async () => {
         setResultList([]);
 
@@ -96,7 +93,7 @@ const HomeScreen = () => {
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [image.base64]);
+  }, [image.uri]);
 
   return (
     <Container>
