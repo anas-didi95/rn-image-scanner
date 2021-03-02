@@ -74,11 +74,7 @@ const HomeScreen = () => {
         setResultList([]);
 
         const imageRef = await firebase.saveImage(image.uri);
-        console.log('imageRef', imageRef);
-
         const downloadURL = await firebase.getDownloadURL(imageRef);
-        console.log('downloadURL', downloadURL);
-
         const responseBody = await googleCloudVision.getTextDetection(
           downloadURL,
         );
