@@ -83,7 +83,7 @@ const HomeScreen = () => {
         console.log('downloadURL', downloadURL);
 
         const responseBody = await googleCloudVision.getTextDetection(
-          image.base64,
+          downloadURL,
         );
         const textList: TResult[] = responseBody.responses[0].textAnnotations
           .filter((text) => !text.locale)
