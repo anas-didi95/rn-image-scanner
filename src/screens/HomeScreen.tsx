@@ -86,6 +86,13 @@ const HomeScreen = () => {
           }));
 
         setResultList(textList);
+
+        await firebase.saveResult({
+          imageUri: downloadURL,
+          fullText: responseBody.responses[0].fullTextAnnotation.text,
+          texts: textList,
+          createDate: new Date(),
+        });
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
