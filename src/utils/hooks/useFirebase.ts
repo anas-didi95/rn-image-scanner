@@ -1,8 +1,12 @@
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
+import {TResult} from '../types';
 
-type TResult = {
+type TFirestoreResult = {
   imageUri: string;
+  fullText: string;
+  texts: TResult[];
+  createDate: Date;
 };
 const useFirebase = () => {
   const saveImage = async (fullPath: string): Promise<string> => {
@@ -30,7 +34,7 @@ const useFirebase = () => {
     }
   };
 
-  const saveResult = async (result: TResult): Promise<string> => {
+  const saveResult = async (result: TFirestoreResult): Promise<string> => {
     try {
       const document = await firestore().collection('results').add(result);
 
