@@ -87,13 +87,12 @@ const HomeScreen = () => {
 
         setResultList(textList);
 
-        const id = await firebase.saveResult({
+        await firebase.saveResult({
           imageUri: downloadURL,
           fullText: responseBody.responses[0].fullTextAnnotation.text,
           texts: textList,
           createDate: new Date(),
         });
-        console.log('id', id);
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

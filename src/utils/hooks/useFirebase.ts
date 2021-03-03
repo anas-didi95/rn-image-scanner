@@ -38,7 +38,6 @@ const useFirebase = () => {
     try {
       const document = await firestore().collection('results').add(result);
 
-      console.log('document', document);
       return document.id;
     } catch (e) {
       console.error('[useFirebase] saveResult failed!', e);
