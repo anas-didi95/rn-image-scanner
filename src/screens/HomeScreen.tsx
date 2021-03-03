@@ -86,6 +86,9 @@ const HomeScreen = () => {
           }));
 
         setResultList(textList);
+
+        const id = await firebase.saveResult({imageUri: downloadURL});
+        console.log('id', id);
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
