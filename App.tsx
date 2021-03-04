@@ -8,6 +8,23 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {Alert, BackHandler} from 'react-native';
 import useConstants from './src/utils/hooks/useConstants';
 import HistoryScreen from './src/screens/HistoryScreen';
+import HistoryResultScreen from './src/screens/HistoryResultScreen';
+
+const HistoryStackNavigator = createStackNavigator();
+const HistoryStack = () => (
+  <HistoryStackNavigator.Navigator initialRouteName="History">
+    <HistoryStackNavigator.Screen
+      name="History"
+      component={HistoryScreen}
+      options={{header: ({}) => null}}
+    />
+    <HistoryStackNavigator.Screen
+      name="history-about"
+      component={HistoryResultScreen}
+      options={{header: () => null}}
+    />
+  </HistoryStackNavigator.Navigator>
+);
 
 const HomeTabNavigator = createBottomTabNavigator();
 const HomeTab = () => {
@@ -46,8 +63,8 @@ const HomeTab = () => {
         }}
       />
       <HomeTabNavigator.Screen
-        name="history"
-        component={HistoryScreen}
+        name="historyStack"
+        component={HistoryStack}
         options={{
           title: 'History',
           tabBarIcon: ({focused}) =>

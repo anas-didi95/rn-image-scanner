@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import {
   Body,
   Button,
@@ -19,6 +20,7 @@ import {StyleSheet} from 'react-native';
 const HistoryScreen = () => {
   const fullText =
     '*Unsaved Document 11 Hello world2 anas.didi95@gmail.com3 018-76013434 +01966377245 https://www.google.com61';
+  const navigation = useNavigation();
 
   return (
     <Container>
@@ -29,7 +31,7 @@ const HistoryScreen = () => {
       </Header>
       <Content padder>
         <List>
-          <ListItem>
+          <ListItem button onPress={() => navigation.navigate('history-about')}>
             <Body>
               <Text style={styles.fullText}>{fullText}</Text>
               <Text note>{new Date().toUTCString()}</Text>
@@ -38,7 +40,7 @@ const HistoryScreen = () => {
               <Icon name="chevron-forward-outline" />
             </Right>
           </ListItem>
-          <ListItem>
+          <ListItem button onPress={() => navigation.navigate('history-about')}>
             <Body>
               <Text style={styles.fullText}>{fullText}</Text>
               <Text note>{new Date().toUTCString()}</Text>
