@@ -11,20 +11,25 @@ import HistoryScreen from './src/screens/HistoryScreen';
 import HistoryResultScreen from './src/screens/HistoryResultScreen';
 
 const HistoryStackNavigator = createStackNavigator();
-const HistoryStack = () => (
-  <HistoryStackNavigator.Navigator initialRouteName="History">
-    <HistoryStackNavigator.Screen
-      name="History"
-      component={HistoryScreen}
-      options={{header: ({}) => null}}
-    />
-    <HistoryStackNavigator.Screen
-      name="history-about"
-      component={HistoryResultScreen}
-      options={{header: () => null}}
-    />
-  </HistoryStackNavigator.Navigator>
-);
+const HistoryStack = () => {
+  const constants = useConstants();
+
+  return (
+    <HistoryStackNavigator.Navigator
+      initialRouteName={constants.route.historyStack.index}>
+      <HistoryStackNavigator.Screen
+        name={constants.route.historyStack.index}
+        component={HistoryScreen}
+        options={{header: () => null}}
+      />
+      <HistoryStackNavigator.Screen
+        name={constants.route.historyStack.result}
+        component={HistoryResultScreen}
+        options={{header: () => null}}
+      />
+    </HistoryStackNavigator.Navigator>
+  );
+};
 
 const HomeTabNavigator = createBottomTabNavigator();
 const HomeTab = () => {
@@ -63,10 +68,10 @@ const HomeTab = () => {
         }}
       />
       <HomeTabNavigator.Screen
-        name="historyStack"
+        name={constants.route.historyStack.index}
         component={HistoryStack}
         options={{
-          title: 'History',
+          title: constants.header.history,
           tabBarIcon: ({focused}) =>
             focused ? <Icon name="timer" /> : <Icon name="timer-outline" />,
         }}

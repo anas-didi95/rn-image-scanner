@@ -1,16 +1,21 @@
 const useConstants = () => {
   const route = {
     homeTab: {
-      index: 'home-tab',
-      home: 'home-tab-home',
-      about: 'home-tab-about',
+      index: '1',
+      home: '1-1',
+      about: '1-2',
     },
-    camera: 'camera',
+    historyStack: {
+      index: '2',
+      result: '2-1',
+    },
   };
 
   const header = {
     home: 'Home',
     about: 'About',
+    history: 'History',
+    historyResult: 'History Result',
   };
 
   return {route, header};

@@ -14,9 +14,11 @@ import {
   Title,
 } from 'native-base';
 import React from 'react';
+import useConstants from '../utils/hooks/useConstants';
 
 const HistoryResultScreen = () => {
   const navigation = useNavigation();
+  const constants = useConstants();
 
   const goBack = () => navigation.goBack();
 
@@ -29,7 +31,7 @@ const HistoryResultScreen = () => {
           </Button>
         </Left>
         <Body>
-          <Title>History Result</Title>
+          <Title>{constants.header.historyResult}</Title>
         </Body>
         <Right />
       </Header>

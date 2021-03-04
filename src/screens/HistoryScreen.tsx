@@ -16,22 +16,27 @@ import {
 } from 'native-base';
 import React from 'react';
 import {StyleSheet} from 'react-native';
+import useConstants from '../utils/hooks/useConstants';
 
 const HistoryScreen = () => {
   const fullText =
     '*Unsaved Document 11 Hello world2 anas.didi95@gmail.com3 018-76013434 +01966377245 https://www.google.com61';
   const navigation = useNavigation();
+  const constants = useConstants();
+
+  const navigateResult = () =>
+    navigation.navigate(constants.route.historyStack.result);
 
   return (
     <Container>
       <Header noLeft>
         <Body>
-          <Title>History</Title>
+          <Title>{constants.header.history}</Title>
         </Body>
       </Header>
       <Content padder>
         <List>
-          <ListItem button onPress={() => navigation.navigate('history-about')}>
+          <ListItem button onPress={navigateResult}>
             <Body>
               <Text style={styles.fullText}>{fullText}</Text>
               <Text note>{new Date().toUTCString()}</Text>
@@ -40,7 +45,7 @@ const HistoryScreen = () => {
               <Icon name="chevron-forward-outline" />
             </Right>
           </ListItem>
-          <ListItem button onPress={() => navigation.navigate('history-about')}>
+          <ListItem button onPress={navigateResult}>
             <Body>
               <Text style={styles.fullText}>{fullText}</Text>
               <Text note>{new Date().toUTCString()}</Text>
