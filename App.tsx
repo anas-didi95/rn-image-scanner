@@ -7,6 +7,29 @@ import {Icon} from 'native-base';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Alert, BackHandler} from 'react-native';
 import useConstants from './src/utils/hooks/useConstants';
+import HistoryScreen from './src/screens/HistoryScreen';
+import HistoryResultScreen from './src/screens/HistoryResultScreen';
+
+const HistoryStackNavigator = createStackNavigator();
+const HistoryStack = () => {
+  const constants = useConstants();
+
+  return (
+    <HistoryStackNavigator.Navigator
+      initialRouteName={constants.route.historyStack.index}>
+      <HistoryStackNavigator.Screen
+        name={constants.route.historyStack.index}
+        component={HistoryScreen}
+        options={{header: () => null}}
+      />
+      <HistoryStackNavigator.Screen
+        name={constants.route.historyStack.result}
+        component={HistoryResultScreen}
+        options={{header: () => null}}
+      />
+    </HistoryStackNavigator.Navigator>
+  );
+};
 
 const HomeTabNavigator = createBottomTabNavigator();
 const HomeTab = () => {
@@ -42,6 +65,15 @@ const HomeTab = () => {
           title: constants.header.home,
           tabBarIcon: ({focused}) =>
             focused ? <Icon name="home" /> : <Icon name="home-outline" />,
+        }}
+      />
+      <HomeTabNavigator.Screen
+        name={constants.route.historyStack.index}
+        component={HistoryStack}
+        options={{
+          title: constants.header.history,
+          tabBarIcon: ({focused}) =>
+            focused ? <Icon name="timer" /> : <Icon name="timer-outline" />,
         }}
       />
       <HomeTabNavigator.Screen
