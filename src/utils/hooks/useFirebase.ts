@@ -49,8 +49,6 @@ const useFirebase = () => {
           createDate: data.createDate.toDate(),
         }));
 
-      console.log('collection', collection);
-      console.log('resultList', resultList);
       return resultList;
     } catch (e) {
       console.error('[useFirebase] getResultList failed!', e);
