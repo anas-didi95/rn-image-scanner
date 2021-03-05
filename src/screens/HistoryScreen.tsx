@@ -1,4 +1,4 @@
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {
   Body,
   Button,
@@ -14,7 +14,7 @@ import {
   Text,
   Title,
 } from 'native-base';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {StyleSheet} from 'react-native';
 import useConstants from '../utils/hooks/useConstants';
 import useFirebase from '../utils/hooks/useFirebase';
@@ -29,12 +29,12 @@ const HistoryScreen = () => {
   const navigateResult = () =>
     navigation.navigate(constants.route.historyStack.result);
 
-  useEffect(() => {
+  useFocusEffect(() => {
     (async () => {
+      console.log('isFocused start');
       await firebase.getResultList();
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
 
   return (
     <Container>
