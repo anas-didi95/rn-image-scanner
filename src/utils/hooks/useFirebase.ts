@@ -45,7 +45,23 @@ const useFirebase = () => {
     }
   };
 
-  return {saveImage, getDownloadURL, saveResult};
+  const getResultList = async (): Promise<TFirestoreResult[]> => {
+    try {
+      const collection = await firestore().collection('results').get();
+      const resultList: TFirestoreResult[] = collection.docs
+        .map((doc) => doc.data())
+        .map((data) => ({...(data as TFirestoreResult)}));
+
+      console.log('collection', collection);
+      console.log('resultList', resultList);
+      return resultList;
+    } catch (e) {
+      console.error('[useFirebase] getResultList failed!', e);
+      return [];
+    }
+  };
+
+  return {saveImage, getDownloadURL, saveResult, getResultList};
 };
 
 export default useFirebase;

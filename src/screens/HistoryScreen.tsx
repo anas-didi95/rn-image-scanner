@@ -14,18 +14,27 @@ import {
   Text,
   Title,
 } from 'native-base';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet} from 'react-native';
 import useConstants from '../utils/hooks/useConstants';
+import useFirebase from '../utils/hooks/useFirebase';
 
 const HistoryScreen = () => {
   const fullText =
     '*Unsaved Document 11 Hello world2 anas.didi95@gmail.com3 018-76013434 +01966377245 https://www.google.com61';
   const navigation = useNavigation();
   const constants = useConstants();
+  const firebase = useFirebase();
 
   const navigateResult = () =>
     navigation.navigate(constants.route.historyStack.result);
+
+  useEffect(() => {
+    (async () => {
+      await firebase.getResultList();
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Container>
