@@ -1,11 +1,8 @@
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {
   Body,
-  Button,
   Container,
   Content,
-  Footer,
-  FooterTab,
   Header,
   Icon,
   List,
@@ -14,27 +11,35 @@ import {
   Text,
   Title,
 } from 'native-base';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import useConstants from '../utils/hooks/useConstants';
 import useFirebase from '../utils/hooks/useFirebase';
+import {TFirestoreResult} from '../utils/types';
 
 const HistoryScreen = () => {
-  const fullText =
-    '*Unsaved Document 11 Hello world2 anas.didi95@gmail.com3 018-76013434 +01966377245 https://www.google.com61';
   const navigation = useNavigation();
   const constants = useConstants();
   const firebase = useFirebase();
+  const [resultList, setResultList] = useState<TFirestoreResult[]>([]);
+  const isFocused = useIsFocused();
 
   const navigateResult = () =>
     navigation.navigate(constants.route.historyStack.result);
 
-  useFocusEffect(() => {
+  useEffect(() => {
     (async () => {
-      console.log('isFocused start');
-      await firebase.getResultList();
+      if (isFocused) {
+        const resultList2 = await firebase.getResultList();
+        setResultList(resultList2);
+      }
     })();
-  });
+
+    return () => {
+      setResultList([]);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFocused]);
 
   return (
     <Container>
@@ -44,34 +49,22 @@ const HistoryScreen = () => {
         </Body>
       </Header>
       <Content padder>
-        <List>
-          <ListItem button onPress={navigateResult}>
-            <Body>
-              <Text style={styles.fullText}>{fullText}</Text>
-              <Text note>{new Date().toUTCString()}</Text>
-            </Body>
-            <Right>
-              <Icon name="chevron-forward-outline" />
-            </Right>
-          </ListItem>
-          <ListItem button onPress={navigateResult}>
-            <Body>
-              <Text style={styles.fullText}>{fullText}</Text>
-              <Text note>{new Date().toUTCString()}</Text>
-            </Body>
-            <Right>
-              <Icon name="chevron-forward-outline" />
-            </Right>
-          </ListItem>
-        </List>
+        {!!resultList && resultList.length > 0 && (
+          <List>
+            {resultList.map((result, i) => (
+              <ListItem key={`result${i}`} button onPress={navigateResult}>
+                <Body>
+                  <Text style={styles.fullText}>{result.fullText}</Text>
+                  <Text note>{result.createDate.toUTCString()}</Text>
+                </Body>
+                <Right>
+                  <Icon name="chevron-forward-outline" />
+                </Right>
+              </ListItem>
+            ))}
+          </List>
+        )}
       </Content>
-      <Footer>
-        <FooterTab>
-          <Button full>
-            <Text>Footer</Text>
-          </Button>
-        </FooterTab>
-      </Footer>
     </Container>
   );
 };
