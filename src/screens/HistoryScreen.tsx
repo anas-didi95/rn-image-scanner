@@ -8,6 +8,7 @@ import {
   List,
   ListItem,
   Right,
+  Spinner,
   Text,
   Title,
 } from 'native-base';
@@ -23,6 +24,7 @@ const HistoryScreen = () => {
   const firebase = useFirebase();
   const [resultList, setResultList] = useState<TFirestoreResult[]>([]);
   const isFocused = useIsFocused();
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   const navigateResult = () =>
     navigation.navigate(constants.route.historyStack.result);
@@ -30,8 +32,10 @@ const HistoryScreen = () => {
   useEffect(() => {
     (async () => {
       if (isFocused) {
+        setLoading(true);
         const resultList2 = await firebase.getResultList();
         setResultList(resultList2);
+        setLoading(false);
       }
     })();
 
@@ -49,6 +53,7 @@ const HistoryScreen = () => {
         </Body>
       </Header>
       <Content padder>
+        {isLoading && <Spinner />}
         {!!resultList && resultList.length > 0 && (
           <List>
             {resultList.map((result, i) => (
