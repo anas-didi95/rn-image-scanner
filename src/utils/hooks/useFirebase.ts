@@ -70,7 +70,6 @@ const useFirebase = () => {
         } as TFirestoreResult;
       });
 
-      console.log('return', [resultList, lastVisible]);
       return [resultList, lastVisible];
     } catch (e) {
       console.error('[useFirebase] getResultList failed!', e);
