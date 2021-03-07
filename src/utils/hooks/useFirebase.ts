@@ -44,6 +44,7 @@ const useFirebase = () => {
       const collection = await firestore()
         .collection('results')
         .orderBy('createDate', 'desc')
+        .limit(5)
         .get();
       const resultList: TFirestoreResult[] = collection.docs.map((doc) => {
         const data = doc.data();

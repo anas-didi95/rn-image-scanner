@@ -1,8 +1,11 @@
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {
   Body,
+  Button,
+  Col,
   Container,
   Content,
+  Grid,
   Header,
   Icon,
   List,
@@ -29,13 +32,17 @@ const HistoryScreen = () => {
   const navigateResult = () =>
     navigation.navigate(constants.route.historyStack.result);
 
+  const onLoadMore = async () => {
+    setLoading(true);
+    const resultList2 = await firebase.getResultList();
+    setResultList(resultList2);
+    setLoading(false);
+  };
+
   useEffect(() => {
     (async () => {
-      if (isFocused) {
-        setLoading(true);
-        const resultList2 = await firebase.getResultList();
-        setResultList(resultList2);
-        setLoading(false);
+      if (isFocused && false) {
+        await onLoadMore();
       }
     })();
 
@@ -53,7 +60,6 @@ const HistoryScreen = () => {
         </Body>
       </Header>
       <Content padder>
-        {isLoading && <Spinner />}
         {!!resultList && resultList.length > 0 && (
           <List>
             {resultList.map((result, i) => (
@@ -72,6 +78,21 @@ const HistoryScreen = () => {
             ))}
           </List>
         )}
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <Grid>
+            <Col />
+            <Button
+              rounded
+              small
+              style={styles.loadMoreButton}
+              onPress={onLoadMore}>
+              <Text>Load More</Text>
+            </Button>
+            <Col />
+          </Grid>
+        )}
       </Content>
     </Container>
   );
@@ -80,6 +101,9 @@ const HistoryScreen = () => {
 const styles = StyleSheet.create({
   fullText: {
     fontWeight: '700',
+  },
+  loadMoreButton: {
+    marginTop: 10,
   },
 });
 
