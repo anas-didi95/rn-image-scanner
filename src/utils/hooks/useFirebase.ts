@@ -41,7 +41,10 @@ const useFirebase = () => {
 
   const getResultList = async (): Promise<TFirestoreResult[]> => {
     try {
-      const collection = await firestore().collection('results').get();
+      const collection = await firestore()
+        .collection('results')
+        .orderBy('createDate', 'desc')
+        .get();
       const resultList: TFirestoreResult[] = collection.docs.map((doc) => {
         const data = doc.data();
 
