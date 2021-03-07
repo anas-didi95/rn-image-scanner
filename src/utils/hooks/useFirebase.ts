@@ -39,13 +39,27 @@ const useFirebase = () => {
     }
   };
 
-  const getResultList = async (): Promise<TFirestoreResult[]> => {
+  const getResultList = async (
+    lastDoc?: any,
+  ): Promise<[TFirestoreResult[], any]> => {
     try {
-      const collection = await firestore()
-        .collection('results')
-        .orderBy('createDate', 'desc')
-        .limit(5)
-        .get();
+      let collection = null;
+      if (lastDoc) {
+        collection = await firestore()
+          .collection('results')
+          .orderBy('createDate', 'desc')
+          .startAfter(lastDoc)
+          .limit(5)
+          .get();
+      } else {
+        collection = await firestore()
+          .collection('results')
+          .orderBy('createDate', 'desc')
+          .limit(5)
+          .get();
+      }
+
+      const lastVisible = collection.docs[collection.docs.length - 1];
       const resultList: TFirestoreResult[] = collection.docs.map((doc) => {
         const data = doc.data();
 
@@ -56,10 +70,11 @@ const useFirebase = () => {
         } as TFirestoreResult;
       });
 
-      return resultList;
+      console.log('return', [resultList, lastVisible]);
+      return [resultList, lastVisible];
     } catch (e) {
       console.error('[useFirebase] getResultList failed!', e);
-      return [];
+      return [[], null];
     }
   };
 

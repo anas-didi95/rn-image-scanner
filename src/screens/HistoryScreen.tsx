@@ -28,20 +28,24 @@ const HistoryScreen = () => {
   const [resultList, setResultList] = useState<TFirestoreResult[]>([]);
   const isFocused = useIsFocused();
   const [isLoading, setLoading] = useState<boolean>(false);
+  const [lastVisible, setLastVisible] = useState();
 
   const navigateResult = () =>
     navigation.navigate(constants.route.historyStack.result);
 
   const onLoadMore = async () => {
     setLoading(true);
-    const resultList2 = await firebase.getResultList();
-    setResultList(resultList2);
+    const [resultList2, lastVisible2] = await firebase.getResultList(
+      lastVisible,
+    );
+    setResultList((prev) => [...prev, ...resultList2]);
+    setLastVisible(lastVisible2);
     setLoading(false);
   };
 
   useEffect(() => {
     (async () => {
-      if (isFocused && false) {
+      if (isFocused) {
         await onLoadMore();
       }
     })();
@@ -81,17 +85,21 @@ const HistoryScreen = () => {
         {isLoading ? (
           <Spinner />
         ) : (
-          <Grid>
-            <Col />
-            <Button
-              rounded
-              small
-              style={styles.loadMoreButton}
-              onPress={onLoadMore}>
-              <Text>Load More</Text>
-            </Button>
-            <Col />
-          </Grid>
+          <>
+            {!!lastVisible && (
+              <Grid>
+                <Col />
+                <Button
+                  rounded
+                  small
+                  style={styles.loadMoreButton}
+                  onPress={onLoadMore}>
+                  <Text>Load More</Text>
+                </Button>
+                <Col />
+              </Grid>
+            )}
+          </>
         )}
       </Content>
     </Container>
