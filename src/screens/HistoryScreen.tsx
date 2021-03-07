@@ -1,8 +1,11 @@
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {
   Body,
+  Button,
+  Col,
   Container,
   Content,
+  Grid,
   Header,
   Icon,
   List,
@@ -25,17 +28,25 @@ const HistoryScreen = () => {
   const [resultList, setResultList] = useState<TFirestoreResult[]>([]);
   const isFocused = useIsFocused();
   const [isLoading, setLoading] = useState<boolean>(false);
+  const [lastVisible, setLastVisible] = useState();
 
   const navigateResult = () =>
     navigation.navigate(constants.route.historyStack.result);
 
+  const onLoadMore = async () => {
+    setLoading(true);
+    const [resultList2, lastVisible2] = await firebase.getResultList(
+      lastVisible,
+    );
+    setResultList((prev) => [...prev, ...resultList2]);
+    setLastVisible(lastVisible2);
+    setLoading(false);
+  };
+
   useEffect(() => {
     (async () => {
       if (isFocused) {
-        setLoading(true);
-        const resultList2 = await firebase.getResultList();
-        setResultList(resultList2);
-        setLoading(false);
+        await onLoadMore();
       }
     })();
 
@@ -53,11 +64,13 @@ const HistoryScreen = () => {
         </Body>
       </Header>
       <Content padder>
-        {isLoading && <Spinner />}
         {!!resultList && resultList.length > 0 && (
           <List>
             {resultList.map((result, i) => (
-              <ListItem key={`result${i}`} button onPress={navigateResult}>
+              <ListItem
+                key={`result${result.id ?? i}`}
+                button
+                onPress={navigateResult}>
                 <Body>
                   <Text style={styles.fullText}>{result.fullText}</Text>
                   <Text note>{result.createDate.toUTCString()}</Text>
@@ -69,6 +82,25 @@ const HistoryScreen = () => {
             ))}
           </List>
         )}
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            {!!lastVisible && (
+              <Grid>
+                <Col />
+                <Button
+                  rounded
+                  small
+                  style={styles.loadMoreButton}
+                  onPress={onLoadMore}>
+                  <Text>Load More</Text>
+                </Button>
+                <Col />
+              </Grid>
+            )}
+          </>
+        )}
       </Content>
     </Container>
   );
@@ -77,6 +109,9 @@ const HistoryScreen = () => {
 const styles = StyleSheet.create({
   fullText: {
     fontWeight: '700',
+  },
+  loadMoreButton: {
+    marginTop: 10,
   },
 });
 
