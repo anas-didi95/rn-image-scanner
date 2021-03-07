@@ -57,7 +57,10 @@ const HistoryScreen = () => {
         {!!resultList && resultList.length > 0 && (
           <List>
             {resultList.map((result, i) => (
-              <ListItem key={`result${i}`} button onPress={navigateResult}>
+              <ListItem
+                key={`result${result.id ?? i}`}
+                button
+                onPress={navigateResult}>
                 <Body>
                   <Text style={styles.fullText}>{result.fullText}</Text>
                   <Text note>{result.createDate.toUTCString()}</Text>

@@ -4,6 +4,7 @@ export type TResult = {
   type: EType;
 };
 export type TFirestoreResult = {
+  id?: string;
   imageUri: string;
   fullText: string;
   texts: TResult[];

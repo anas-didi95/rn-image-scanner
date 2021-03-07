@@ -42,12 +42,15 @@ const useFirebase = () => {
   const getResultList = async (): Promise<TFirestoreResult[]> => {
     try {
       const collection = await firestore().collection('results').get();
-      const resultList: TFirestoreResult[] = collection.docs
-        .map((doc) => doc.data())
-        .map((data) => ({
-          ...(data as TFirestoreResult),
+      const resultList: TFirestoreResult[] = collection.docs.map((doc) => {
+        const data = doc.data();
+
+        return {
+          ...data,
+          id: doc.id,
           createDate: data.createDate.toDate(),
-        }));
+        } as TFirestoreResult;
+      });
 
       return resultList;
     } catch (e) {
