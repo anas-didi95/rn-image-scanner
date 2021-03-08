@@ -52,7 +52,6 @@ const HistoryResultScreen = () => {
       (async () => {
         const {id} = route.params;
         const doc = await firebase.getResultById(id);
-        console.log('[HistoryResultScreen] doc', doc);
         setResult(doc);
       })();
     }
