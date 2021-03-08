@@ -42,8 +42,6 @@ const HistoryScreen = () => {
 
   const onPressResult = async (id: string) => {
     navigation.navigate(constants.route.historyStack.result, {id: id});
-    //const doc = await firebase.getResultById(id);
-    //console.log('doc', doc);
   };
 
   useEffect(() => {

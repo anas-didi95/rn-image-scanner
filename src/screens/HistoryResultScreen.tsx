@@ -7,6 +7,8 @@ import {
 import {
   Body,
   Button,
+  Card,
+  CardItem,
   Container,
   Content,
   Footer,
@@ -18,9 +20,11 @@ import {
   Text,
   Title,
 } from 'native-base';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
+import {Image, StyleSheet} from 'react-native';
 import useConstants from '../utils/hooks/useConstants';
 import useFirebase from '../utils/hooks/useFirebase';
+import {TFirestoreResult} from '../utils/types';
 
 type ParamList = {
   HistoryResultScreen: {id: string};
@@ -33,6 +37,13 @@ const HistoryResultScreen = () => {
   const isFocused = useIsFocused();
   const route = useRoute<HistoryResultScreenRouteProp>();
   const firebase = useFirebase();
+  const [result, setResult] = useState<TFirestoreResult>({
+    imageUri: '',
+    createDate: new Date(),
+    fullText: '',
+    texts: [],
+    id: '',
+  });
 
   const goBack = () => navigation.goBack();
 
@@ -42,6 +53,7 @@ const HistoryResultScreen = () => {
         const {id} = route.params;
         const doc = await firebase.getResultById(id);
         console.log('[HistoryResultScreen] doc', doc);
+        setResult(doc);
       })();
     }
 
@@ -62,7 +74,19 @@ const HistoryResultScreen = () => {
         <Right />
       </Header>
       <Content padder>
-        <Text>This is Content Section</Text>
+        {!!result.imageUri && (
+          <Card>
+            <CardItem cardBody>
+              <Image
+                resizeMode="stretch"
+                source={{
+                  uri: result.imageUri,
+                }}
+                style={styles.image}
+              />
+            </CardItem>
+          </Card>
+        )}
       </Content>
       <Footer>
         <FooterTab>
@@ -74,5 +98,30 @@ const HistoryResultScreen = () => {
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  image: {
+    height: 300,
+    flex: 1,
+  },
+  cameraButton: {
+    backgroundColor: 'green',
+  },
+  cardHeader: {
+    fontWeight: 'bold',
+  },
+  clearButton: {
+    backgroundColor: 'gray',
+  },
+  uploadButton: {
+    backgroundColor: '#ff8c00',
+  },
+  spinner: {
+    justifyContent: 'center',
+  },
+  resultValue: {
+    fontWeight: '700',
+  },
+});
 
 export default HistoryResultScreen;
