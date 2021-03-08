@@ -1,4 +1,4 @@
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {
   Body,
   Button,
@@ -28,6 +28,7 @@ const HistoryScreen = () => {
   const isFocused = useIsFocused();
   const [isLoading, setLoading] = useState<boolean>(false);
   const [lastVisible, setLastVisible] = useState();
+  const navigation = useNavigation();
 
   const onLoadMore = async () => {
     setLoading(true);
@@ -40,8 +41,9 @@ const HistoryScreen = () => {
   };
 
   const onPressResult = async (id: string) => {
-    const doc = await firebase.getResultById(id);
-    console.log('doc', doc);
+    navigation.navigate(constants.route.historyStack.result, {id: id});
+    //const doc = await firebase.getResultById(id);
+    //console.log('doc', doc);
   };
 
   useEffect(() => {
@@ -53,6 +55,7 @@ const HistoryScreen = () => {
 
     return () => {
       setResultList([]);
+      setLastVisible(undefined);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
