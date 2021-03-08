@@ -77,7 +77,29 @@ const useFirebase = () => {
     }
   };
 
-  return {saveImage, getDownloadURL, saveResult, getResultList};
+  const getResultById = async (id: string): Promise<TFirestoreResult> => {
+    try {
+      const doc = await firestore().collection('results').doc(id).get();
+      const data = doc.data();
+
+      return {
+        ...data,
+        id: doc.id,
+        createDate: data?.createDate.toDate(),
+      } as TFirestoreResult;
+    } catch (e) {
+      console.error('[useFirebase] getResultById failed!', e);
+      return {
+        createDate: new Date(),
+        fullText: '',
+        imageUri: '',
+        texts: [],
+        id: '',
+      };
+    }
+  };
+
+  return {saveImage, getDownloadURL, saveResult, getResultList, getResultById};
 };
 
 export default useFirebase;

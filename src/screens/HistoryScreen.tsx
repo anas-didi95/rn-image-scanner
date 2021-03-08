@@ -22,16 +22,13 @@ import useFirebase from '../utils/hooks/useFirebase';
 import {TFirestoreResult} from '../utils/types';
 
 const HistoryScreen = () => {
-  const navigation = useNavigation();
   const constants = useConstants();
   const firebase = useFirebase();
   const [resultList, setResultList] = useState<TFirestoreResult[]>([]);
   const isFocused = useIsFocused();
   const [isLoading, setLoading] = useState<boolean>(false);
   const [lastVisible, setLastVisible] = useState();
-
-  const navigateResult = () =>
-    navigation.navigate(constants.route.historyStack.result);
+  const navigation = useNavigation();
 
   const onLoadMore = async () => {
     setLoading(true);
@@ -43,6 +40,10 @@ const HistoryScreen = () => {
     setLoading(false);
   };
 
+  const onPressResult = async (id: string) => {
+    navigation.navigate(constants.route.historyStack.result, {id: id});
+  };
+
   useEffect(() => {
     (async () => {
       if (isFocused) {
@@ -52,6 +53,7 @@ const HistoryScreen = () => {
 
     return () => {
       setResultList([]);
+      setLastVisible(undefined);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
@@ -70,7 +72,7 @@ const HistoryScreen = () => {
               <ListItem
                 key={`result${result.id ?? i}`}
                 button
-                onPress={navigateResult}>
+                onPress={() => onPressResult(result.id ?? '')}>
                 <Body>
                   <Text style={styles.fullText}>{result.fullText}</Text>
                   <Text note>{result.createDate.toUTCString()}</Text>
