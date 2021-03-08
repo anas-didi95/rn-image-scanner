@@ -1,4 +1,4 @@
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 import {
   Body,
   Button,
@@ -22,16 +22,12 @@ import useFirebase from '../utils/hooks/useFirebase';
 import {TFirestoreResult} from '../utils/types';
 
 const HistoryScreen = () => {
-  const navigation = useNavigation();
   const constants = useConstants();
   const firebase = useFirebase();
   const [resultList, setResultList] = useState<TFirestoreResult[]>([]);
   const isFocused = useIsFocused();
   const [isLoading, setLoading] = useState<boolean>(false);
   const [lastVisible, setLastVisible] = useState();
-
-  const navigateResult = () =>
-    navigation.navigate(constants.route.historyStack.result);
 
   const onLoadMore = async () => {
     setLoading(true);
@@ -41,6 +37,11 @@ const HistoryScreen = () => {
     setResultList((prev) => [...prev, ...resultList2]);
     setLastVisible(lastVisible2);
     setLoading(false);
+  };
+
+  const onPressResult = async (id: string) => {
+    const doc = await firebase.getResultById(id);
+    console.log('doc', doc);
   };
 
   useEffect(() => {
@@ -70,7 +71,7 @@ const HistoryScreen = () => {
               <ListItem
                 key={`result${result.id ?? i}`}
                 button
-                onPress={navigateResult}>
+                onPress={() => onPressResult(result.id ?? '')}>
                 <Body>
                   <Text style={styles.fullText}>{result.fullText}</Text>
                   <Text note>{result.createDate.toUTCString()}</Text>
