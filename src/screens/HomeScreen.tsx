@@ -99,6 +99,11 @@ const HomeScreen = () => {
         });
       })();
     }
+
+    return () => {
+      onClearPicture();
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [image.uri]);
 
@@ -147,13 +152,11 @@ const ImagePlaceholderCard: React.FC<{
     {uri ? (
       <>
         <ImageCard uri={uri} />
-        <Button
-          full
-          style={styles.clearButton}
-          onPress={onClearPicture}
-          disabled={isLoading}>
-          <Text>Clear picture</Text>
-        </Button>
+        {!isLoading && (
+          <Button full style={styles.clearButton} onPress={onClearPicture}>
+            <Text>Clear picture</Text>
+          </Button>
+        )}
       </>
     ) : (
       <Card>
