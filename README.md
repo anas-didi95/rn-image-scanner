@@ -32,7 +32,7 @@ An app to find phone numbers, email and website links available in a photo and t
 - [x] Processing is done on the image.
 - [x] If there are any phone numbers, email or web links present in the image then they are listed in the cards properly organized.
 - [x] On tap on the phone, email or web link, an option is provided to open phone app, email or web browser respectively.
-- [ ] History of search results are provided in the list view
+- [x] History of search results are provided in the list view
 
 ---
 

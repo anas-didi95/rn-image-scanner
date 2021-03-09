@@ -8,28 +8,30 @@ import {
   Fab,
   Header,
   Icon,
-  Right,
   Spinner,
   Text,
   Title,
 } from 'native-base';
 import React, {useEffect, useState} from 'react';
-import {Alert, Image, Linking, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import useConstants from '../utils/hooks/useConstants';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 import ImagePicker from 'react-native-image-crop-picker';
 import useValidate from '../utils/hooks/useValidate';
 import {TResult} from '../utils/types';
 import useFirebase from '../utils/hooks/useFirebase';
+import ImageCard from '../components/ImageCard';
+import ResultListCard from '../components/ResultListCard';
 
 const HomeScreen = () => {
-  const [isFabActive, setFabActive] = useState<boolean>(false);
   const constants = useConstants();
   const googleCloudVision = useGoogleCloudVision();
   const validate = useValidate();
+  const firebase = useFirebase();
   const [image, setImage] = useState<{uri: string}>({uri: ''});
   const [resultList, setResultList] = useState<TResult[]>([]);
-  const firebase = useFirebase();
+  const [isFabActive, setFabActive] = useState<boolean>(false);
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
@@ -71,6 +73,7 @@ const HomeScreen = () => {
   useEffect(() => {
     if (image.uri) {
       (async () => {
+        setLoading(true);
         setResultList([]);
 
         const imageRef = await firebase.saveImage(image.uri);
@@ -86,6 +89,7 @@ const HomeScreen = () => {
           }));
 
         setResultList(textList);
+        setLoading(false);
 
         await firebase.saveResult({
           imageUri: downloadURL,
@@ -95,6 +99,11 @@ const HomeScreen = () => {
         });
       })();
     }
+
+    return () => {
+      onClearPicture();
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [image.uri]);
 
@@ -106,8 +115,16 @@ const HomeScreen = () => {
         </Body>
       </Header>
       <Content padder>
-        <ImagePlaceholderCard onClearPicture={onClearPicture} uri={image.uri} />
-        <ResultCard resultList={resultList} uri={image.uri} />
+        <ImagePlaceholderCard
+          uri={image.uri}
+          onClearPicture={onClearPicture}
+          isLoading={isLoading}
+        />
+        <ResultCard
+          resultList={resultList}
+          isImageAvailable={!!image.uri}
+          isLoading={isLoading}
+        />
       </Content>
       <Fab
         direction="up"
@@ -129,115 +146,46 @@ const HomeScreen = () => {
 const ImagePlaceholderCard: React.FC<{
   uri: string;
   onClearPicture: () => void;
-}> = ({uri, onClearPicture}) => (
-  <Card>
-    {!uri ? (
-      <CardItem header>
-        <Body>
-          <Text style={styles.cardHeader}>
-            {!uri ? 'Instruction' : 'Picture'}
-          </Text>
-          <Text>Please snap or choose a picture to start scanner.</Text>
-        </Body>
-      </CardItem>
-    ) : (
+  isLoading: boolean;
+}> = ({uri, onClearPicture, isLoading}) => (
+  <>
+    {uri ? (
       <>
-        <CardItem cardBody>
-          <Image
-            resizeMode="stretch"
-            source={{
-              uri: uri,
-            }}
-            style={styles.image}
-          />
-        </CardItem>
-        <Button full style={styles.clearButton} onPress={onClearPicture}>
-          <Text>Clear picture</Text>
-        </Button>
+        <ImageCard uri={uri} />
+        {!isLoading && (
+          <Button full style={styles.clearButton} onPress={onClearPicture}>
+            <Text>Clear picture</Text>
+          </Button>
+        )}
       </>
+    ) : (
+      <Card>
+        <CardItem header>
+          <Body>
+            <Text style={styles.cardHeader}>Instruction</Text>
+            <Text>Please snap or choose a picture to start scanner.</Text>
+          </Body>
+        </CardItem>
+      </Card>
     )}
-  </Card>
+  </>
 );
 
-const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
-  uri,
-  resultList,
-}) => {
-  const onPress = async (result: TResult) => {
-    try {
-      let url = '';
-      let supported = false;
-      let message = '';
-
-      if (result.type === 'Phone') {
-        url = `tel:${result.value}`;
-        message = 'Continue to open phone app?';
-      } else if (result.type === 'Email') {
-        url = `mailto:${result.value}`;
-        message = 'Continue to open email app?';
-      } else if (result.type === 'Web Link') {
-        url = result.value;
-        message = 'Continue to open web browser?';
-      }
-
-      supported = await Linking.canOpenURL(url);
-      if (supported) {
-        Alert.alert('Confirm Action', message, [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'OK',
-            onPress: () => Linking.openURL(url),
-            style: 'default',
-          },
-        ]);
-      } else {
-        console.error('[ResultList] onPress failed! URL not supported! ', url);
-      }
-    } catch (e) {
-      console.log('[ResultList] onPress failed!', e);
-    }
-  };
-
-  return (
-    <>
-      {!!uri && (
-        <Card>
-          {!resultList || resultList.length === 0 ? (
-            <CardItem style={styles.spinner}>
-              <Spinner />
-            </CardItem>
-          ) : (
-            <>
-              {resultList.map((result, idx) => (
-                <CardItem
-                  key={`idx${idx}`}
-                  button
-                  onPress={() => onPress(result)}>
-                  <Body>
-                    <Text style={styles.resultValue}>{result.value}</Text>
-                    <Text note>{result.type}</Text>
-                  </Body>
-                  <Right>
-                    <Icon name="chevron-forward-outline" />
-                  </Right>
-                </CardItem>
-              ))}
-            </>
-          )}
-        </Card>
-      )}
-    </>
-  );
-};
+const ResultCard: React.FC<{
+  isImageAvailable: boolean;
+  resultList: TResult[];
+  isLoading: boolean;
+}> = ({isImageAvailable, resultList, isLoading}) => (
+  <>
+    {isLoading ? (
+      <Spinner />
+    ) : (
+      <>{isImageAvailable && <ResultListCard resultList={resultList} />}</>
+    )}
+  </>
+);
 
 const styles = StyleSheet.create({
-  image: {
-    height: 300,
-    flex: 1,
-  },
   cameraButton: {
     backgroundColor: 'green',
   },
@@ -249,12 +197,6 @@ const styles = StyleSheet.create({
   },
   uploadButton: {
     backgroundColor: '#ff8c00',
-  },
-  spinner: {
-    justifyContent: 'center',
-  },
-  resultValue: {
-    fontWeight: '700',
   },
 });
 
