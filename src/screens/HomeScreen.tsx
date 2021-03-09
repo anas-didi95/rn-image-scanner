@@ -14,22 +14,23 @@ import {
   Title,
 } from 'native-base';
 import React, {useEffect, useState} from 'react';
-import {Alert, Image, Linking, StyleSheet} from 'react-native';
+import {Alert, Linking, StyleSheet} from 'react-native';
 import useConstants from '../utils/hooks/useConstants';
 import useGoogleCloudVision from '../utils/hooks/useGoogleCloudVision';
 import ImagePicker from 'react-native-image-crop-picker';
 import useValidate from '../utils/hooks/useValidate';
 import {TResult} from '../utils/types';
 import useFirebase from '../utils/hooks/useFirebase';
+import ImageCard from '../components/ImageCard';
 
 const HomeScreen = () => {
-  const [isFabActive, setFabActive] = useState<boolean>(false);
   const constants = useConstants();
   const googleCloudVision = useGoogleCloudVision();
   const validate = useValidate();
+  const firebase = useFirebase();
   const [image, setImage] = useState<{uri: string}>({uri: ''});
   const [resultList, setResultList] = useState<TResult[]>([]);
-  const firebase = useFirebase();
+  const [isFabActive, setFabActive] = useState<boolean>(false);
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
@@ -71,28 +72,28 @@ const HomeScreen = () => {
   useEffect(() => {
     if (image.uri) {
       (async () => {
-        setResultList([]);
-
-        const imageRef = await firebase.saveImage(image.uri);
-        const downloadURL = await firebase.getDownloadURL(imageRef);
-        const responseBody = await googleCloudVision.getTextDetection(
-          downloadURL,
-        );
-        const textList: TResult[] = responseBody.responses[0].textAnnotations
-          .filter((text) => !text.locale)
-          .map((text) => ({
-            type: validate.getType(text.description),
-            value: text.description,
-          }));
-
-        setResultList(textList);
-
-        await firebase.saveResult({
-          imageUri: downloadURL,
-          fullText: responseBody.responses[0].fullTextAnnotation.text,
-          texts: textList,
-          createDate: new Date(),
-        });
+        //setResultList([]);
+        //
+        //const imageRef = await firebase.saveImage(image.uri);
+        //const downloadURL = await firebase.getDownloadURL(imageRef);
+        //const responseBody = await googleCloudVision.getTextDetection(
+        //  downloadURL,
+        //);
+        //const textList: TResult[] = responseBody.responses[0].textAnnotations
+        //  .filter((text) => !text.locale)
+        //  .map((text) => ({
+        //    type: validate.getType(text.description),
+        //    value: text.description,
+        //  }));
+        //
+        //setResultList(textList);
+        //
+        //await firebase.saveResult({
+        //  imageUri: downloadURL,
+        //  fullText: responseBody.responses[0].fullTextAnnotation.text,
+        //  texts: textList,
+        //  createDate: new Date(),
+        //});
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,7 +107,7 @@ const HomeScreen = () => {
         </Body>
       </Header>
       <Content padder>
-        <ImagePlaceholderCard onClearPicture={onClearPicture} uri={image.uri} />
+        <ImagePlaceholderCard uri={image.uri} onClearPicture={onClearPicture} />
         <ResultCard resultList={resultList} uri={image.uri} />
       </Content>
       <Fab
@@ -130,33 +131,25 @@ const ImagePlaceholderCard: React.FC<{
   uri: string;
   onClearPicture: () => void;
 }> = ({uri, onClearPicture}) => (
-  <Card>
-    {!uri ? (
-      <CardItem header>
-        <Body>
-          <Text style={styles.cardHeader}>
-            {!uri ? 'Instruction' : 'Picture'}
-          </Text>
-          <Text>Please snap or choose a picture to start scanner.</Text>
-        </Body>
-      </CardItem>
-    ) : (
+  <>
+    {uri ? (
       <>
-        <CardItem cardBody>
-          <Image
-            resizeMode="stretch"
-            source={{
-              uri: uri,
-            }}
-            style={styles.image}
-          />
-        </CardItem>
+        <ImageCard uri={uri} />
         <Button full style={styles.clearButton} onPress={onClearPicture}>
           <Text>Clear picture</Text>
         </Button>
       </>
+    ) : (
+      <Card>
+        <CardItem header>
+          <Body>
+            <Text style={styles.cardHeader}>Instruction</Text>
+            <Text>Please snap or choose a picture to start scanner.</Text>
+          </Body>
+        </CardItem>
+      </Card>
     )}
-  </Card>
+  </>
 );
 
 const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
@@ -234,10 +227,6 @@ const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
 };
 
 const styles = StyleSheet.create({
-  image: {
-    height: 300,
-    flex: 1,
-  },
   cameraButton: {
     backgroundColor: 'green',
   },
