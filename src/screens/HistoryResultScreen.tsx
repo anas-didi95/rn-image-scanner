@@ -18,6 +18,7 @@ import {
 } from 'native-base';
 import React, {useEffect, useState} from 'react';
 import ImageCard from '../components/ImageCard';
+import ResultListCard from '../components/ResultListCard';
 import useConstants from '../utils/hooks/useConstants';
 import useFirebase from '../utils/hooks/useFirebase';
 import {TFirestoreResult} from '../utils/types';
@@ -72,6 +73,7 @@ const HistoryResultScreen = () => {
         {result.imageUri ? (
           <>
             <ImageCard uri={result.imageUri} />
+            <ResultListCard resultList={result.texts} />
           </>
         ) : (
           <Spinner />
