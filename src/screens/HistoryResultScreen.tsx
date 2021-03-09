@@ -7,21 +7,17 @@ import {
 import {
   Body,
   Button,
-  Card,
-  CardItem,
   Container,
   Content,
-  Footer,
-  FooterTab,
   Header,
   Icon,
   Left,
   Right,
-  Text,
+  Spinner,
   Title,
 } from 'native-base';
 import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet} from 'react-native';
+import ImageCard from '../components/ImageCard';
 import useConstants from '../utils/hooks/useConstants';
 import useFirebase from '../utils/hooks/useFirebase';
 import {TFirestoreResult} from '../utils/types';
@@ -35,8 +31,8 @@ const HistoryResultScreen = () => {
   const navigation = useNavigation();
   const constants = useConstants();
   const isFocused = useIsFocused();
-  const route = useRoute<HistoryResultScreenRouteProp>();
   const firebase = useFirebase();
+  const route = useRoute<HistoryResultScreenRouteProp>();
   const [result, setResult] = useState<TFirestoreResult>({
     imageUri: '',
     createDate: new Date(),
@@ -73,54 +69,16 @@ const HistoryResultScreen = () => {
         <Right />
       </Header>
       <Content padder>
-        {!!result.imageUri && (
-          <Card>
-            <CardItem cardBody>
-              <Image
-                resizeMode="stretch"
-                source={{
-                  uri: result.imageUri,
-                }}
-                style={styles.image}
-              />
-            </CardItem>
-          </Card>
+        {result.imageUri ? (
+          <>
+            <ImageCard uri={result.imageUri} />
+          </>
+        ) : (
+          <Spinner />
         )}
       </Content>
-      <Footer>
-        <FooterTab>
-          <Button full>
-            <Text>Footer</Text>
-          </Button>
-        </FooterTab>
-      </Footer>
     </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  image: {
-    height: 300,
-    flex: 1,
-  },
-  cameraButton: {
-    backgroundColor: 'green',
-  },
-  cardHeader: {
-    fontWeight: 'bold',
-  },
-  clearButton: {
-    backgroundColor: 'gray',
-  },
-  uploadButton: {
-    backgroundColor: '#ff8c00',
-  },
-  spinner: {
-    justifyContent: 'center',
-  },
-  resultValue: {
-    fontWeight: '700',
-  },
-});
 
 export default HistoryResultScreen;
