@@ -22,6 +22,7 @@ import useValidate from '../utils/hooks/useValidate';
 import {TResult} from '../utils/types';
 import useFirebase from '../utils/hooks/useFirebase';
 import ImageCard from '../components/ImageCard';
+import ResultListCard from '../components/ResultListCard';
 
 const HomeScreen = () => {
   const constants = useConstants();
@@ -31,6 +32,7 @@ const HomeScreen = () => {
   const [image, setImage] = useState<{uri: string}>({uri: ''});
   const [resultList, setResultList] = useState<TResult[]>([]);
   const [isFabActive, setFabActive] = useState<boolean>(false);
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   const toggleFabActive = () => setFabActive((prev) => !prev);
 
@@ -72,6 +74,7 @@ const HomeScreen = () => {
   useEffect(() => {
     if (image.uri) {
       (async () => {
+        setLoading(true);
         //setResultList([]);
         //
         //const imageRef = await firebase.saveImage(image.uri);
@@ -87,6 +90,7 @@ const HomeScreen = () => {
         //  }));
         //
         //setResultList(textList);
+        setLoading(false);
         //
         //await firebase.saveResult({
         //  imageUri: downloadURL,
@@ -108,7 +112,11 @@ const HomeScreen = () => {
       </Header>
       <Content padder>
         <ImagePlaceholderCard uri={image.uri} onClearPicture={onClearPicture} />
-        <ResultCard resultList={resultList} uri={image.uri} />
+        <ResultCard
+          resultList={resultList}
+          isImageAvailable={!!image.uri}
+          isLoading={isLoading}
+        />
       </Content>
       <Fab
         direction="up"
@@ -152,79 +160,19 @@ const ImagePlaceholderCard: React.FC<{
   </>
 );
 
-const ResultCard: React.FC<{uri: string; resultList: TResult[]}> = ({
-  uri,
-  resultList,
-}) => {
-  const onPress = async (result: TResult) => {
-    try {
-      let url = '';
-      let supported = false;
-      let message = '';
-
-      if (result.type === 'Phone') {
-        url = `tel:${result.value}`;
-        message = 'Continue to open phone app?';
-      } else if (result.type === 'Email') {
-        url = `mailto:${result.value}`;
-        message = 'Continue to open email app?';
-      } else if (result.type === 'Web Link') {
-        url = result.value;
-        message = 'Continue to open web browser?';
-      }
-
-      supported = await Linking.canOpenURL(url);
-      if (supported) {
-        Alert.alert('Confirm Action', message, [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'OK',
-            onPress: () => Linking.openURL(url),
-            style: 'default',
-          },
-        ]);
-      } else {
-        console.error('[ResultList] onPress failed! URL not supported! ', url);
-      }
-    } catch (e) {
-      console.log('[ResultList] onPress failed!', e);
-    }
-  };
-
-  return (
-    <>
-      {!!uri && (
-        <Card>
-          {!resultList || resultList.length === 0 ? (
-            <CardItem style={styles.spinner}>
-              <Spinner />
-            </CardItem>
-          ) : (
-            <>
-              {resultList.map((result, idx) => (
-                <CardItem
-                  key={`idx${idx}`}
-                  button
-                  onPress={() => onPress(result)}>
-                  <Body>
-                    <Text style={styles.resultValue}>{result.value}</Text>
-                    <Text note>{result.type}</Text>
-                  </Body>
-                  <Right>
-                    <Icon name="chevron-forward-outline" />
-                  </Right>
-                </CardItem>
-              ))}
-            </>
-          )}
-        </Card>
-      )}
-    </>
-  );
-};
+const ResultCard: React.FC<{
+  isImageAvailable: boolean;
+  resultList: TResult[];
+  isLoading: boolean;
+}> = ({isImageAvailable, resultList, isLoading}) => (
+  <>
+    {isLoading ? (
+      <Spinner />
+    ) : (
+      <>{isImageAvailable && <ResultListCard resultList={resultList} />}</>
+    )}
+  </>
+);
 
 const styles = StyleSheet.create({
   cameraButton: {
@@ -241,9 +189,6 @@ const styles = StyleSheet.create({
   },
   spinner: {
     justifyContent: 'center',
-  },
-  resultValue: {
-    fontWeight: '700',
   },
 });
 
